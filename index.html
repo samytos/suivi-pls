@@ -1,0 +1,440 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, sans-serif); }
+  .app { padding: 1rem 0; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 0; }
+  .tab { padding: 8px 16px; font-size: 14px; font-weight: 400; color: var(--color-text-secondary); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: color 0.15s; }
+  .tab.active { color: var(--color-text-primary); font-weight: 500; border-bottom: 2px solid var(--color-text-primary); }
+  .section { display: none; }
+  .section.active { display: block; }
+  label { font-size: 13px; color: var(--color-text-secondary); display: block; margin-bottom: 4px; }
+  input, select, textarea { font-family: inherit; font-size: 14px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; }
+  .form-group.full { grid-column: 1 / -1; }
+  .btn { padding: 8px 20px; font-size: 14px; font-weight: 500; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); transition: background 0.15s; }
+  .btn:hover { background: var(--color-background-secondary); }
+  .btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn.danger { color: var(--color-text-danger); border-color: var(--color-border-danger); }
+  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .chart-wrap { position: relative; width: 100%; height: 280px; margin-bottom: 1.5rem; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log-table th { text-align: left; padding: 6px 8px; color: var(--color-text-secondary); font-weight: 400; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .log-table td { padding: 8px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+  .log-table tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); font-size: 14px; }
+  .period-btn { padding: 4px 10px; font-size: 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: none; color: var(--color-text-secondary); cursor: pointer; }
+  .period-btn.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+  .filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+  .settings-section { margin-bottom: 1.5rem; }
+  .settings-title { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: var(--color-text-primary); }
+  .cat-list { display: flex; flex-direction: column; gap: 8px; }
+  .cat-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); }
+  .cat-color { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+  .cat-name { flex: 1; font-size: 14px; }
+  .cat-target { font-size: 12px; color: var(--color-text-secondary); }
+  .add-cat-form { display: flex; gap: 8px; margin-top: 8px; }
+  .progress-bar { height: 6px; background: var(--color-border-tertiary); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  .legend-sq { width: 10px; height: 10px; border-radius: 2px; }
+</style>
+
+<div class="app">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="tab" onclick="showTab('saisie')">Saisie</button>
+    <button class="tab" onclick="showTab('journal')">Journal</button>
+    <button class="tab" onclick="showTab('parametres')">Paramètres</button>
+  </div>
+
+  <div id="tab-dashboard" class="section active">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+      <div style="font-size:14px; color:var(--color-text-secondary);" id="dash-period-label">Ce mois-ci</div>
+      <div style="display:flex; gap:6px;">
+        <button class="period-btn active" onclick="setPeriod('month', this)">Mois</button>
+        <button class="period-btn" onclick="setPeriod('year', this)">Année</button>
+        <button class="period-btn" onclick="setPeriod('all', this)">Tout</button>
+      </div>
+    </div>
+
+    <div class="metrics" id="metrics-row"></div>
+
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="card-title">Répartition par catégorie</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="legend-row"></div>
+      <div class="chart-wrap" style="height:220px;"><canvas id="chartDonut" role="img" aria-label="Répartition des activités par catégorie">Graphique en anneau</canvas></div>
+    </div>
+
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="card-title" id="trend-title">Tendance mensuelle — heures</div>
+      <div class="chart-wrap"><canvas id="chartTrend" role="img" aria-label="Évolution mensuelle des heures par catégorie">Graphique de tendance</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Alignement sur le rôle</div>
+      <div id="role-alignment"></div>
+    </div>
+  </div>
+
+  <div id="tab-saisie" class="section">
+    <div class="card">
+      <div class="card-title">Nouvelle activité</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-group">
+          <label>Catégorie</label>
+          <select id="f-cat"></select>
+        </div>
+        <div class="form-group full">
+          <label>Description de l'activité</label>
+          <input type="text" id="f-desc" placeholder="Ex: réunion de coordination équipe PLS">
+        </div>
+        <div class="form-group">
+          <label>Durée (heures)</label>
+          <input type="number" id="f-heures" min="0" step="0.25" placeholder="1.5">
+        </div>
+        <div class="form-group">
+          <label>Nombre d'actions</label>
+          <input type="number" id="f-actions" min="0" step="1" placeholder="3">
+        </div>
+        <div class="form-group full">
+          <label>Notes / contexte</label>
+          <textarea id="f-notes" rows="2" placeholder="Optionnel…" style="resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn primary" onclick="saveEntry()">Enregistrer</button>
+        <button class="btn" onclick="clearForm()">Effacer</button>
+      </div>
+      <div id="form-msg" style="margin-top:10px; font-size:13px; color:var(--color-text-success);"></div>
+    </div>
+  </div>
+
+  <div id="tab-journal" class="section">
+    <div class="filter-row">
+      <select id="filter-cat" onchange="renderJournal()" style="font-size:13px; padding:4px 8px;">
+        <option value="">Toutes catégories</option>
+      </select>
+      <select id="filter-month" onchange="renderJournal()" style="font-size:13px; padding:4px 8px;">
+        <option value="">Tous les mois</option>
+      </select>
+      <button class="btn" style="font-size:12px; padding:4px 10px;" onclick="exportCSV()">Exporter CSV</button>
+    </div>
+    <div id="journal-table"></div>
+  </div>
+
+  <div id="tab-parametres" class="section">
+    <div class="card settings-section">
+      <div class="settings-title">Catégories de missions</div>
+      <div class="cat-list" id="cat-list"></div>
+      <div class="add-cat-form">
+        <input type="text" id="new-cat-name" placeholder="Nouvelle catégorie…" style="flex:1; font-size:13px;">
+        <input type="number" id="new-cat-target" placeholder="% cible" min="0" max="100" style="width:90px; font-size:13px;">
+        <button class="btn" onclick="addCategory()">Ajouter</button>
+      </div>
+      <div id="cat-msg" style="margin-top:8px; font-size:12px; color:var(--color-text-success);"></div>
+    </div>
+    <div class="card">
+      <div class="settings-title">Export & données</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" onclick="exportJSON()">Exporter JSON</button>
+        <button class="btn danger" onclick="clearAll()">Réinitialiser tout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const COLORS = ['#7F77DD','#1D9E75','#D85A30','#D4537E','#378ADD','#BA7517','#639922','#E24B4A','#888780','#5DCAA5'];
+const MONTHS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+let categories = JSON.parse(localStorage.getItem('pls_cats') || 'null') || [
+  { id: 1, name: 'Encadrement équipe', target: 25 },
+  { id: 2, name: 'Planification / Logistique', target: 20 },
+  { id: 3, name: 'Gestion RH', target: 15 },
+  { id: 4, name: 'Hygiène / Sécurité (ERP)', target: 15 },
+  { id: 5, name: 'Marchés publics', target: 10 },
+  { id: 6, name: 'Relations & coordination', target: 10 },
+  { id: 7, name: 'Administration / Divers', target: 5 },
+];
+let entries = JSON.parse(localStorage.getItem('pls_entries') || '[]');
+let currentPeriod = 'month';
+let chartDonut = null, chartTrend = null;
+
+function save() {
+  localStorage.setItem('pls_cats', JSON.stringify(categories));
+  localStorage.setItem('pls_entries', JSON.stringify(entries));
+}
+
+function getCatById(id) { return categories.find(c => c.id == id) || { name: '?', id: 0 }; }
+function getCatColor(id) { const i = categories.findIndex(c => c.id == id); return COLORS[i % COLORS.length]; }
+
+function filteredEntries() {
+  const now = new Date();
+  return entries.filter(e => {
+    const d = new Date(e.date);
+    if (currentPeriod === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    if (currentPeriod === 'year') return d.getFullYear() === now.getFullYear();
+    return true;
+  });
+}
+
+function showTab(t) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+  event.target.classList.add('active');
+  if (t === 'dashboard') renderDashboard();
+  if (t === 'journal') renderJournal();
+  if (t === 'parametres') renderSettings();
+  if (t === 'saisie') populateCatSelect();
+}
+
+function setPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const labels = { month: 'Ce mois-ci', year: 'Cette année', all: 'Tout' };
+  document.getElementById('dash-period-label').textContent = labels[p];
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const fe = filteredEntries();
+  const totalH = fe.reduce((s, e) => s + (parseFloat(e.heures) || 0), 0);
+  const totalA = fe.reduce((s, e) => s + (parseInt(e.actions) || 0), 0);
+  const jours = [...new Set(fe.map(e => e.date))].length;
+  const avgH = jours > 0 ? totalH / jours : 0;
+
+  document.getElementById('metrics-row').innerHTML = `
+    <div class="metric"><div class="metric-label">Heures totales</div><div class="metric-value">${totalH.toFixed(1)}</div><div class="metric-sub">${jours} jour(s) enregistré(s)</div></div>
+    <div class="metric"><div class="metric-label">Actions réalisées</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches/actions</div></div>
+    <div class="metric"><div class="metric-label">Moy. / jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
+    <div class="metric"><div class="metric-label">Activités saisies</div><div class="metric-value">${fe.length}</div><div class="metric-sub">entrées</div></div>
+  `;
+
+  const bycat = {};
+  categories.forEach(c => bycat[c.id] = 0);
+  fe.forEach(e => { if (!bycat[e.catId]) bycat[e.catId] = 0; bycat[e.catId] += parseFloat(e.heures) || 0; });
+
+  const labels = categories.map(c => c.name);
+  const data = categories.map(c => Math.round((bycat[c.id] || 0) * 100) / 100);
+  const colors = categories.map((c, i) => COLORS[i % COLORS.length]);
+
+  document.getElementById('legend-row').innerHTML = categories.map((c, i) =>
+    `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i % COLORS.length]}"></span>${c.name}</span>`
+  ).join('');
+
+  if (chartDonut) chartDonut.destroy();
+  chartDonut = new Chart(document.getElementById('chartDonut'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1, borderColor: 'transparent' }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}h` } } }
+    }
+  });
+
+  renderTrendChart();
+  renderAlignment(bycat, totalH);
+}
+
+function renderTrendChart() {
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+    return { year: d.getFullYear(), month: d.getMonth(), label: MONTHS_FR[d.getMonth()] };
+  });
+
+  const datasets = categories.map((c, i) => ({
+    label: c.name,
+    data: months.map(m => {
+      return entries.filter(e => {
+        const d = new Date(e.date);
+        return e.catId == c.id && d.getFullYear() === m.year && d.getMonth() === m.month;
+      }).reduce((s, e) => s + (parseFloat(e.heures) || 0), 0);
+    }),
+    borderColor: COLORS[i % COLORS.length],
+    backgroundColor: COLORS[i % COLORS.length] + '22',
+    tension: 0.3, fill: false, pointRadius: 3
+  }));
+
+  if (chartTrend) chartTrend.destroy();
+  chartTrend = new Chart(document.getElementById('chartTrend'), {
+    type: 'line',
+    data: { labels: months.map(m => m.label), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => v + 'h' } } }
+    }
+  });
+}
+
+function renderAlignment(bycat, totalH) {
+  const el = document.getElementById('role-alignment');
+  if (totalH === 0) { el.innerHTML = '<p style="font-size:13px;color:var(--color-text-secondary);">Aucune donnée pour la période.</p>'; return; }
+  el.innerHTML = categories.map((c, i) => {
+    const h = bycat[c.id] || 0;
+    const pct = totalH > 0 ? Math.round(h / totalH * 100) : 0;
+    const diff = pct - (c.target || 0);
+    const status = Math.abs(diff) <= 5 ? '#1D9E75' : diff > 5 ? '#E24B4A' : '#BA7517';
+    return `<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;">
+        <span style="font-size:13px;">${c.name}</span>
+        <span style="font-size:12px;color:${status};font-weight:500;">${pct}% <span style="color:var(--color-text-secondary);font-weight:400;">/ cible ${c.target || 0}%</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${COLORS[i % COLORS.length]};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderJournal() {
+  const filterCat = document.getElementById('filter-cat').value;
+  const filterMonth = document.getElementById('filter-month').value;
+
+  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>' +
+    categories.map(c => `<option value="${c.id}" ${filterCat == c.id ? 'selected' : ''}>${c.name}</option>`).join('');
+  document.getElementById('filter-cat').value = filterCat;
+
+  const allMonths = [...new Set(entries.map(e => e.date.slice(0, 7)))].sort().reverse();
+  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>' +
+    allMonths.map(m => `<option value="${m}" ${filterMonth === m ? 'selected' : ''}>${m}</option>`).join('');
+  document.getElementById('filter-month').value = filterMonth;
+
+  let list = [...entries].sort((a, b) => b.date.localeCompare(a.date));
+  if (filterCat) list = list.filter(e => e.catId == filterCat);
+  if (filterMonth) list = list.filter(e => e.date.startsWith(filterMonth));
+
+  const el = document.getElementById('journal-table');
+  if (list.length === 0) { el.innerHTML = '<div class="empty-state">Aucune activité enregistrée.<br>Utilisez l\'onglet Saisie pour commencer.</div>'; return; }
+
+  el.innerHTML = `<table class="log-table"><thead><tr>
+    <th>Date</th><th>Catégorie</th><th>Description</th><th style="text-align:right;">Heures</th><th style="text-align:right;">Actions</th><th></th>
+  </tr></thead><tbody>` +
+    list.map(e => {
+      const cat = getCatById(e.catId);
+      const col = getCatColor(e.catId);
+      return `<tr>
+        <td style="white-space:nowrap;">${e.date}</td>
+        <td><span class="badge" style="background:${col}22;color:${col};">${cat.name}</span></td>
+        <td>${e.desc || '—'}${e.notes ? `<br><span style="font-size:11px;color:var(--color-text-secondary);">${e.notes}</span>` : ''}</td>
+        <td style="text-align:right;">${e.heures || '—'}</td>
+        <td style="text-align:right;">${e.actions || '—'}</td>
+        <td><button class="btn danger" style="padding:2px 8px;font-size:11px;" onclick="deleteEntry('${e.id}')">Suppr.</button></td>
+      </tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+function populateCatSelect() {
+  document.getElementById('f-cat').innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  const today = new Date().toISOString().slice(0, 10);
+  if (!document.getElementById('f-date').value) document.getElementById('f-date').value = today;
+}
+
+function saveEntry() {
+  const date = document.getElementById('f-date').value;
+  const catId = document.getElementById('f-cat').value;
+  const desc = document.getElementById('f-desc').value.trim();
+  const heures = document.getElementById('f-heures').value;
+  const actions = document.getElementById('f-actions').value;
+  const notes = document.getElementById('f-notes').value.trim();
+  if (!date || !catId) { document.getElementById('form-msg').style.color = 'var(--color-text-danger)'; document.getElementById('form-msg').textContent = 'Veuillez renseigner la date et la catégorie.'; return; }
+  const entry = { id: Date.now().toString(), date, catId: parseInt(catId), desc, heures: parseFloat(heures) || 0, actions: parseInt(actions) || 0, notes };
+  entries.push(entry);
+  save();
+  document.getElementById('form-msg').style.color = 'var(--color-text-success)';
+  document.getElementById('form-msg').textContent = 'Activité enregistrée !';
+  setTimeout(() => document.getElementById('form-msg').textContent = '', 2000);
+  clearForm();
+}
+
+function clearForm() {
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-heures').value = '';
+  document.getElementById('f-actions').value = '';
+  document.getElementById('f-notes').value = '';
+}
+
+function deleteEntry(id) {
+  if (!confirm('Supprimer cette entrée ?')) return;
+  entries = entries.filter(e => e.id !== id);
+  save();
+  renderJournal();
+}
+
+function renderSettings() {
+  document.getElementById('cat-list').innerHTML = categories.map((c, i) => `
+    <div class="cat-item">
+      <div class="cat-color" style="background:${COLORS[i % COLORS.length]};"></div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-target">Cible : <input type="number" value="${c.target || 0}" min="0" max="100" style="width:48px;font-size:12px;text-align:right;" onchange="updateTarget(${c.id}, this.value)">%</div>
+      <button class="btn danger" style="padding:2px 8px;font-size:11px;" onclick="deleteCategory(${c.id})">Suppr.</button>
+    </div>
+  `).join('');
+}
+
+function updateTarget(id, val) {
+  const c = categories.find(c => c.id == id);
+  if (c) c.target = parseInt(val) || 0;
+  save();
+}
+
+function addCategory() {
+  const name = document.getElementById('new-cat-name').value.trim();
+  const target = parseInt(document.getElementById('new-cat-target').value) || 0;
+  if (!name) return;
+  categories.push({ id: Date.now(), name, target });
+  save();
+  document.getElementById('new-cat-name').value = '';
+  document.getElementById('new-cat-target').value = '';
+  document.getElementById('cat-msg').textContent = 'Catégorie ajoutée !';
+  setTimeout(() => document.getElementById('cat-msg').textContent = '', 2000);
+  renderSettings();
+  populateCatSelect();
+}
+
+function deleteCategory(id) {
+  if (!confirm('Supprimer cette catégorie ?')) return;
+  categories = categories.filter(c => c.id !== id);
+  save();
+  renderSettings();
+}
+
+function exportCSV() {
+  const rows = [['Date','Catégorie','Description','Heures','Actions','Notes']];
+  entries.forEach(e => rows.push([e.date, getCatById(e.catId).name, e.desc, e.heures, e.actions, e.notes]));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'activites_PLS.csv'; a.click();
+}
+
+function exportJSON() {
+  const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({ categories, entries }));
+  a.download = 'activites_PLS.json'; a.click();
+}
+
+function clearAll() {
+  if (!confirm('Réinitialiser toutes les données ?')) return;
+  entries = []; save(); renderDashboard();
+}
+
+populateCatSelect();
+renderDashboard();
+renderSettings();
+</script>
