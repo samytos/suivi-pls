@@ -446,14 +446,22 @@ function renderDashboard() {
   });
 }
 
-function renderJournal() {
+function populateJournalFilters() {
   const filterCat = document.getElementById('filter-cat').value;
   const filterMonth = document.getElementById('filter-month').value;
-  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.id}" ${filterCat==c.id?'selected':''}>${c.name}</option>`).join('');
+  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('filter-cat').value = filterCat;
   const allMonths=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
-  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>'+allMonths.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('');
+  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>'+allMonths.map(m=>`<option value="${m}">${m}</option>`).join('');
+  document.getElementById('filter-month').value = filterMonth;
+}
+
+function renderJournal() {
+  populateJournalFilters();
+  const filterCat = document.getElementById('filter-cat').value;
+  const filterMonth = document.getElementById('filter-month').value;
   let list=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  if(filterCat) list=list.filter(e=>e.catId==filterCat);
+  if(filterCat) list=list.filter(e=>String(e.catId)==String(filterCat));
   if(filterMonth) list=list.filter(e=>e.date.startsWith(filterMonth));
 
   // Mobile cards
@@ -661,7 +669,7 @@ window.showTab=function(t,btn){
   document.getElementById('tab-'+t).classList.add('active');
   if(btn)btn.classList.add('active');
   if(t==='dashboard')renderDashboard();
-  if(t==='journal')renderJournal();
+  if(t==='journal'){populateJournalFilters();renderJournal();}
   if(t==='parametres')renderSettings();
   if(t==='saisie')populateCatSelect();
 };
