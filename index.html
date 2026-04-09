@@ -447,21 +447,23 @@ function renderDashboard() {
 }
 
 function populateJournalFilters() {
-  const filterCat = document.getElementById('filter-cat').value;
-  const filterMonth = document.getElementById('filter-month').value;
-  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  document.getElementById('filter-cat').value = filterCat;
+  const prevCat = document.getElementById('filter-cat').value;
+  const prevMonth = document.getElementById('filter-month').value;
+  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  if(prevCat) document.getElementById('filter-cat').value = prevCat;
   const allMonths=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
   document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>'+allMonths.map(m=>`<option value="${m}">${m}</option>`).join('');
-  document.getElementById('filter-month').value = filterMonth;
+  if(prevMonth) document.getElementById('filter-month').value = prevMonth;
 }
 
 function renderJournal() {
   populateJournalFilters();
-  const filterCat = document.getElementById('filter-cat').value;
+  const filterCatName = document.getElementById('filter-cat').value;
   const filterMonth = document.getElementById('filter-month').value;
   let list=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  if(filterCat) list=list.filter(e=>String(e.catId)==String(filterCat));
+  if(filterCatName) {
+    list=list.filter(e=>getCatById(e.catId).name===filterCatName);
+  }
   if(filterMonth) list=list.filter(e=>e.date.startsWith(filterMonth));
 
   // Mobile cards
