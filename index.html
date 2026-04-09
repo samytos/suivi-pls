@@ -225,8 +225,8 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <!-- JOURNAL -->
   <div id="tab-journal" class="section">
     <div class="filter-row">
-      <select id="filter-cat" onchange="renderJournal()"></select>
-      <select id="filter-month" onchange="renderJournal()"></select>
+      <select id="filter-cat" onchange="applyJournalFilters()"></select>
+      <select id="filter-month" onchange="applyJournalFilters()"></select>
       <button class="btn secondary sm" onclick="exportCSV()">Export CSV</button>
     </div>
     <!-- Mobile: cards -->
@@ -450,11 +450,25 @@ function populateJournalFilters() {
   const prevCat = document.getElementById('filter-cat').value;
   const prevMonth = document.getElementById('filter-month').value;
   document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
-  if(prevCat) document.getElementById('filter-cat').value = prevCat;
+  document.getElementById('filter-cat').value = prevCat;
   const allMonths=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
   document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>'+allMonths.map(m=>`<option value="${m}">${m}</option>`).join('');
-  if(prevMonth) document.getElementById('filter-month').value = prevMonth;
+  document.getElementById('filter-month').value = prevMonth;
 }
+
+window.applyJournalFilters = function() {
+  const filterCatName = document.getElementById('filter-cat').value;
+  const filterMonth = document.getElementById('filter-month').value;
+  let list=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  if(filterCatName) {
+    list=list.filter(e=>{
+      const catName = getCatById(e.catId).name;
+      return catName===filterCatName || String(e.catId)===filterCatName;
+    });
+  }
+  if(filterMonth) list=list.filter(e=>e.date.startsWith(filterMonth));
+  renderJournalList(list);
+};
 
 function renderJournal() {
   populateJournalFilters();
@@ -462,9 +476,16 @@ function renderJournal() {
   const filterMonth = document.getElementById('filter-month').value;
   let list=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
   if(filterCatName) {
-    list=list.filter(e=>getCatById(e.catId).name===filterCatName);
+    list=list.filter(e=>{
+      const catName = getCatById(e.catId).name;
+      return catName===filterCatName || String(e.catId)===filterCatName;
+    });
   }
   if(filterMonth) list=list.filter(e=>e.date.startsWith(filterMonth));
+  renderJournalList(list);
+}
+
+function renderJournalList(list) {
 
   // Mobile cards
   const listEl = document.getElementById('journal-list');
@@ -671,7 +692,7 @@ window.showTab=function(t,btn){
   document.getElementById('tab-'+t).classList.add('active');
   if(btn)btn.classList.add('active');
   if(t==='dashboard')renderDashboard();
-  if(t==='journal'){populateJournalFilters();renderJournal();}
+  if(t==='journal'){renderJournal();}
   if(t==='parametres')renderSettings();
   if(t==='saisie')populateCatSelect();
 };
