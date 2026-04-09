@@ -1,184 +1,239 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi Activités — Responsable Adjoint Pôle PLS</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font-sans, sans-serif); }
-  .app { padding: 1rem 0; }
-  .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 0; }
-  .tab { padding: 8px 16px; font-size: 14px; font-weight: 400; color: var(--color-text-secondary); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: color 0.15s; }
-  .tab.active { color: var(--color-text-primary); font-weight: 500; border-bottom: 2px solid var(--color-text-primary); }
-  .section { display: none; }
-  .section.active { display: block; }
-  label { font-size: 13px; color: var(--color-text-secondary); display: block; margin-bottom: 4px; }
-  input, select, textarea { font-family: inherit; font-size: 14px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .form-group { display: flex; flex-direction: column; }
-  .form-group.full { grid-column: 1 / -1; }
-  .btn { padding: 8px 20px; font-size: 14px; font-weight: 500; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); transition: background 0.15s; }
-  .btn:hover { background: var(--color-background-secondary); }
-  .btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
-  .btn.primary:hover { opacity: 0.85; }
-  .btn.danger { color: var(--color-text-danger); border-color: var(--color-border-danger); }
-  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
-  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
-  .metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
-  .metric-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
-  .chart-wrap { position: relative; width: 100%; height: 280px; margin-bottom: 1.5rem; }
-  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
-  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
-  .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .log-table th { text-align: left; padding: 6px 8px; color: var(--color-text-secondary); font-weight: 400; border-bottom: 0.5px solid var(--color-border-tertiary); }
-  .log-table td { padding: 8px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
-  .log-table tr:last-child td { border-bottom: none; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
-  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); font-size: 14px; }
-  .period-btn { padding: 4px 10px; font-size: 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: none; color: var(--color-text-secondary); cursor: pointer; }
-  .period-btn.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
-  .filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
-  .settings-section { margin-bottom: 1.5rem; }
-  .settings-title { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: var(--color-text-primary); }
-  .cat-list { display: flex; flex-direction: column; gap: 8px; }
-  .cat-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); }
-  .cat-color { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
-  .cat-name { flex: 1; font-size: 14px; }
-  .cat-target { font-size: 12px; color: var(--color-text-secondary); }
-  .add-cat-form { display: flex; gap: 8px; margin-top: 8px; }
-  .progress-bar { height: 6px; background: var(--color-border-tertiary); border-radius: 3px; overflow: hidden; margin-top: 4px; }
-  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
-  .legend-sq { width: 10px; height: 10px; border-radius: 2px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f4f4f2; color: #2c2c2a; min-height: 100vh; }
+.topbar { background: #4B3FA0; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+.topbar h1 { font-size: 15px; font-weight: 600; }
+.topbar .sub { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+.sync { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: white; border-radius: 10px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.tab { flex: 1; padding: 10px; font-size: 14px; font-weight: 500; color: #888; cursor: pointer; border: none; background: none; border-radius: 8px; transition: all 0.15s; }
+.tab.active { background: #4B3FA0; color: white; }
+.section { display: none; }
+.section.active { display: block; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.metric { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+.metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.metric-value { font-size: 26px; font-weight: 600; color: #2c2c2a; }
+.metric-sub { font-size: 11px; color: #aaa; margin-top: 3px; }
+.card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+.card-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+.chart-wrap { position: relative; width: 100%; height: 260px; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+label { font-size: 13px; color: #666; font-weight: 500; }
+input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; color: #2c2c2a; background: #fafafa; transition: border 0.15s; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD; background: white; }
+.btn { padding: 10px 22px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: all 0.15s; }
+.btn.primary { background: #4B3FA0; color: white; }
+.btn.primary:hover { background: #3C3489; }
+.btn.secondary { background: #f0f0ee; color: #444; }
+.btn.secondary:hover { background: #e4e4e0; }
+.btn.danger { background: #fff0f0; color: #A32D2D; border: 1px solid #f0c0c0; }
+.btn.sm { padding: 5px 12px; font-size: 12px; }
+.btn-row { display: flex; gap: 10px; }
+.status-msg { font-size: 13px; padding: 8px 14px; border-radius: 8px; margin-top: 10px; display: none; }
+.status-msg.show { display: block; }
+.status-msg.ok { background: #E1F5EE; color: #0F6E56; }
+.status-msg.err { background: #FCEBEB; color: #A32D2D; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.log-table th { text-align: left; padding: 8px 10px; color: #888; font-weight: 500; border-bottom: 1px solid #f0f0ee; font-size: 12px; }
+.log-table td { padding: 10px; border-bottom: 1px solid #f7f7f5; color: #2c2c2a; vertical-align: top; }
+.log-table tr:hover td { background: #fafaf8; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+.empty { text-align: center; padding: 60px 20px; color: #aaa; font-size: 14px; }
+.period-btn { padding: 6px 14px; font-size: 13px; border: 1px solid #e0e0e0; border-radius: 20px; background: white; color: #666; cursor: pointer; font-weight: 500; }
+.period-btn.active { background: #4B3FA0; color: white; border-color: #4B3FA0; }
+.legend-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
+.legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.progress-bar { height: 8px; background: #f0f0ee; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+.progress-fill { height: 100%; border-radius: 4px; }
+.cat-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px; }
+.filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filter-row select { width: auto; }
+@media (max-width: 600px) {
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+}
 </style>
+</head>
+<body>
 
-<div class="app">
+<div class="topbar">
+  <div>
+    <div class="h1">Suivi Activités — Responsable Adjoint Pôle PLS</div>
+    <div class="sub">Université Paris-Est Créteil</div>
+  </div>
+  <div class="sync" id="sync-status">Connexion...</div>
+</div>
+
+<div class="container">
   <div class="tabs">
-    <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
-    <button class="tab" onclick="showTab('saisie')">Saisie</button>
-    <button class="tab" onclick="showTab('journal')">Journal</button>
-    <button class="tab" onclick="showTab('parametres')">Paramètres</button>
+    <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="showTab('saisie',this)">Saisie</button>
+    <button class="tab" onclick="showTab('journal',this)">Journal</button>
+    <button class="tab" onclick="showTab('parametres',this)">Paramètres</button>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="tab-dashboard" class="section active">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-      <div style="font-size:14px; color:var(--color-text-secondary);" id="dash-period-label">Ce mois-ci</div>
-      <div style="display:flex; gap:6px;">
-        <button class="period-btn active" onclick="setPeriod('month', this)">Mois</button>
-        <button class="period-btn" onclick="setPeriod('year', this)">Année</button>
-        <button class="period-btn" onclick="setPeriod('all', this)">Tout</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-size:14px;color:#888;" id="period-label">Ce mois-ci</div>
+      <div style="display:flex;gap:6px;">
+        <button class="period-btn active" onclick="setPeriod('month',this)">Mois</button>
+        <button class="period-btn" onclick="setPeriod('year',this)">Année</button>
+        <button class="period-btn" onclick="setPeriod('all',this)">Tout</button>
       </div>
     </div>
-
     <div class="metrics" id="metrics-row"></div>
-
-    <div class="card" style="margin-bottom:1rem;">
-      <div class="card-title">Répartition par catégorie</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="legend-row"></div>
-      <div class="chart-wrap" style="height:220px;"><canvas id="chartDonut" role="img" aria-label="Répartition des activités par catégorie">Graphique en anneau</canvas></div>
+    <div class="chart-row">
+      <div class="card">
+        <div class="card-title">Répartition par catégorie</div>
+        <div class="legend-row" id="legend-row"></div>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartDonut"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Alignement sur le rôle</div>
+        <div id="role-align"></div>
+      </div>
     </div>
-
-    <div class="card" style="margin-bottom:1rem;">
-      <div class="card-title" id="trend-title">Tendance mensuelle — heures</div>
-      <div class="chart-wrap"><canvas id="chartTrend" role="img" aria-label="Évolution mensuelle des heures par catégorie">Graphique de tendance</canvas></div>
-    </div>
-
     <div class="card">
-      <div class="card-title">Alignement sur le rôle</div>
-      <div id="role-alignment"></div>
+      <div class="card-title">Tendance 6 derniers mois — heures par catégorie</div>
+      <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
     </div>
   </div>
 
+  <!-- SAISIE -->
   <div id="tab-saisie" class="section">
     <div class="card">
       <div class="card-title">Nouvelle activité</div>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Date</label>
-          <input type="date" id="f-date">
-        </div>
-        <div class="form-group">
-          <label>Catégorie</label>
-          <select id="f-cat"></select>
-        </div>
-        <div class="form-group full">
-          <label>Description de l'activité</label>
-          <input type="text" id="f-desc" placeholder="Ex: réunion de coordination équipe PLS">
-        </div>
-        <div class="form-group">
-          <label>Durée (heures)</label>
-          <input type="number" id="f-heures" min="0" step="0.25" placeholder="1.5">
-        </div>
-        <div class="form-group">
-          <label>Nombre d'actions</label>
-          <input type="number" id="f-actions" min="0" step="1" placeholder="3">
-        </div>
-        <div class="form-group full">
-          <label>Notes / contexte</label>
-          <textarea id="f-notes" rows="2" placeholder="Optionnel…" style="resize:vertical;"></textarea>
-        </div>
+        <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
+        <div class="form-group"><label>Catégorie</label><select id="f-cat"></select></div>
+        <div class="form-group full"><label>Description de l'activité</label><input type="text" id="f-desc" placeholder="Ex : réunion de coordination équipe PLS"></div>
+        <div class="form-group"><label>Durée (heures)</label><input type="number" id="f-heures" min="0" step="0.25" placeholder="1.5"></div>
+        <div class="form-group"><label>Nombre d'actions</label><input type="number" id="f-actions" min="0" step="1" placeholder="3"></div>
+        <div class="form-group full"><label>Notes / contexte</label><textarea id="f-notes" rows="2" placeholder="Optionnel…"></textarea></div>
       </div>
-      <div style="display:flex; gap:8px;">
+      <div class="btn-row">
         <button class="btn primary" onclick="saveEntry()">Enregistrer</button>
-        <button class="btn" onclick="clearForm()">Effacer</button>
+        <button class="btn secondary" onclick="clearForm()">Effacer</button>
       </div>
-      <div id="form-msg" style="margin-top:10px; font-size:13px; color:var(--color-text-success);"></div>
+      <div class="status-msg" id="form-status"></div>
     </div>
   </div>
 
+  <!-- JOURNAL -->
   <div id="tab-journal" class="section">
     <div class="filter-row">
-      <select id="filter-cat" onchange="renderJournal()" style="font-size:13px; padding:4px 8px;">
-        <option value="">Toutes catégories</option>
-      </select>
-      <select id="filter-month" onchange="renderJournal()" style="font-size:13px; padding:4px 8px;">
-        <option value="">Tous les mois</option>
-      </select>
-      <button class="btn" style="font-size:12px; padding:4px 10px;" onclick="exportCSV()">Exporter CSV</button>
+      <select id="filter-cat" onchange="renderJournal()" style="font-size:13px;padding:6px 10px;width:auto;"></select>
+      <select id="filter-month" onchange="renderJournal()" style="font-size:13px;padding:6px 10px;width:auto;"></select>
+      <button class="btn secondary sm" onclick="exportCSV()">Exporter CSV</button>
     </div>
-    <div id="journal-table"></div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div id="journal-table"></div>
+    </div>
   </div>
 
+  <!-- PARAMÈTRES -->
   <div id="tab-parametres" class="section">
-    <div class="card settings-section">
-      <div class="settings-title">Catégories de missions</div>
-      <div class="cat-list" id="cat-list"></div>
-      <div class="add-cat-form">
-        <input type="text" id="new-cat-name" placeholder="Nouvelle catégorie…" style="flex:1; font-size:13px;">
-        <input type="number" id="new-cat-target" placeholder="% cible" min="0" max="100" style="width:90px; font-size:13px;">
-        <button class="btn" onclick="addCategory()">Ajouter</button>
+    <div class="card">
+      <div class="card-title">Catégories de missions</div>
+      <div id="cat-list"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+        <input type="text" id="new-cat-name" placeholder="Nouvelle catégorie…" style="flex:1;min-width:160px;">
+        <input type="number" id="new-cat-target" placeholder="% cible" min="0" max="100" style="width:90px;">
+        <button class="btn primary" onclick="addCategory()">Ajouter</button>
       </div>
-      <div id="cat-msg" style="margin-top:8px; font-size:12px; color:var(--color-text-success);"></div>
+      <div class="status-msg" id="cat-status" style="margin-top:10px;"></div>
     </div>
     <div class="card">
-      <div class="settings-title">Export & données</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn" onclick="exportJSON()">Exporter JSON</button>
-        <button class="btn danger" onclick="clearAll()">Réinitialiser tout</button>
+      <div class="card-title">Export & données</div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="exportJSON()">Exporter JSON</button>
+        <button class="btn danger" onclick="clearAll()">Réinitialiser toutes les données</button>
       </div>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-const COLORS = ['#7F77DD','#1D9E75','#D85A30','#D4537E','#378ADD','#BA7517','#639922','#E24B4A','#888780','#5DCAA5'];
-const MONTHS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-let categories = JSON.parse(localStorage.getItem('pls_cats') || 'null') || [
-  { id: 1, name: 'Encadrement équipe', target: 25 },
-  { id: 2, name: 'Planification / Logistique', target: 20 },
-  { id: 3, name: 'Gestion RH', target: 15 },
-  { id: 4, name: 'Hygiène / Sécurité (ERP)', target: 15 },
-  { id: 5, name: 'Marchés publics', target: 10 },
-  { id: 6, name: 'Relations & coordination', target: 10 },
-  { id: 7, name: 'Administration / Divers', target: 5 },
-];
-let entries = JSON.parse(localStorage.getItem('pls_entries') || '[]');
-let currentPeriod = 'month';
+const firebaseConfig = {
+  apiKey: "AIzaSyAHrN8f6kYz23yKjHWtowkTQr4nap4QG7g",
+  authDomain: "suivi-activitepls.firebaseapp.com",
+  projectId: "suivi-activitepls",
+  storageBucket: "suivi-activitepls.firebasestorage.app",
+  messagingSenderId: "283692707114",
+  appId: "1:283692707114:web:7c3e8ad9edc4e059138253"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const COLORS = ['#7F77DD','#1D9E75','#D85A30','#D4537E','#378ADD','#BA7517','#639922'];
+const MONTHS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+let categories = [], entries = [], currentPeriod = 'month';
 let chartDonut = null, chartTrend = null;
 
-function save() {
-  localStorage.setItem('pls_cats', JSON.stringify(categories));
-  localStorage.setItem('pls_entries', JSON.stringify(entries));
+function setSyncStatus(msg, ok) {
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.style.background = ok === true ? 'rgba(29,158,117,0.3)' : ok === false ? 'rgba(227,75,74,0.3)' : 'rgba(255,255,255,0.15)';
+}
+
+function showStatus(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'status-msg show ' + type;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+async function loadData() {
+  try {
+    setSyncStatus('Chargement...', null);
+    const catSnap = await getDoc(doc(db, 'pls_config', 'categories'));
+    if (catSnap.exists()) {
+      categories = catSnap.data().list;
+    } else {
+      categories = [
+        { id: 1, name: 'Encadrement équipe', target: 25 },
+        { id: 2, name: 'Planification / Logistique', target: 20 },
+        { id: 3, name: 'Gestion RH', target: 15 },
+        { id: 4, name: 'Hygiène / Sécurité (ERP)', target: 15 },
+        { id: 5, name: 'Marchés publics', target: 10 },
+        { id: 6, name: 'Relations & coordination', target: 10 },
+        { id: 7, name: 'Administration / Divers', target: 5 },
+      ];
+      await saveCategories();
+    }
+    const q = query(collection(db, 'pls_entries'), orderBy('date', 'desc'));
+    const snap = await getDocs(q);
+    entries = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+    setSyncStatus('Synchronisé', true);
+    renderAll();
+  } catch(e) {
+    setSyncStatus('Erreur Firebase', false);
+    console.error(e);
+  }
+}
+
+async function saveCategories() {
+  await setDoc(doc(db, 'pls_config', 'categories'), { list: categories });
 }
 
 function getCatById(id) { return categories.find(c => c.id == id) || { name: '?', id: 0 }; }
@@ -194,247 +249,194 @@ function filteredEntries() {
   });
 }
 
-function showTab(t) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + t).classList.add('active');
-  event.target.classList.add('active');
-  if (t === 'dashboard') renderDashboard();
-  if (t === 'journal') renderJournal();
-  if (t === 'parametres') renderSettings();
-  if (t === 'saisie') populateCatSelect();
-}
-
-function setPeriod(p, btn) {
-  currentPeriod = p;
-  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const labels = { month: 'Ce mois-ci', year: 'Cette année', all: 'Tout' };
-  document.getElementById('dash-period-label').textContent = labels[p];
-  renderDashboard();
-}
+function renderAll() { renderDashboard(); renderJournal(); renderSettings(); populateCatSelect(); }
 
 function renderDashboard() {
   const fe = filteredEntries();
-  const totalH = fe.reduce((s, e) => s + (parseFloat(e.heures) || 0), 0);
-  const totalA = fe.reduce((s, e) => s + (parseInt(e.actions) || 0), 0);
+  const totalH = fe.reduce((s,e) => s+(parseFloat(e.heures)||0), 0);
+  const totalA = fe.reduce((s,e) => s+(parseInt(e.actions)||0), 0);
   const jours = [...new Set(fe.map(e => e.date))].length;
-  const avgH = jours > 0 ? totalH / jours : 0;
-
+  const avgH = jours > 0 ? totalH/jours : 0;
   document.getElementById('metrics-row').innerHTML = `
     <div class="metric"><div class="metric-label">Heures totales</div><div class="metric-value">${totalH.toFixed(1)}</div><div class="metric-sub">${jours} jour(s) enregistré(s)</div></div>
-    <div class="metric"><div class="metric-label">Actions réalisées</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches/actions</div></div>
-    <div class="metric"><div class="metric-label">Moy. / jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
+    <div class="metric"><div class="metric-label">Actions réalisées</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches / actions</div></div>
+    <div class="metric"><div class="metric-label">Moyenne / jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
     <div class="metric"><div class="metric-label">Activités saisies</div><div class="metric-value">${fe.length}</div><div class="metric-sub">entrées</div></div>
   `;
-
   const bycat = {};
   categories.forEach(c => bycat[c.id] = 0);
-  fe.forEach(e => { if (!bycat[e.catId]) bycat[e.catId] = 0; bycat[e.catId] += parseFloat(e.heures) || 0; });
+  fe.forEach(e => { bycat[e.catId] = (bycat[e.catId]||0) + (parseFloat(e.heures)||0); });
 
-  const labels = categories.map(c => c.name);
-  const data = categories.map(c => Math.round((bycat[c.id] || 0) * 100) / 100);
-  const colors = categories.map((c, i) => COLORS[i % COLORS.length]);
-
-  document.getElementById('legend-row').innerHTML = categories.map((c, i) =>
-    `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i % COLORS.length]}"></span>${c.name}</span>`
+  document.getElementById('legend-row').innerHTML = categories.map((c,i) =>
+    `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i%COLORS.length]}"></span>${c.name}</span>`
   ).join('');
 
   if (chartDonut) chartDonut.destroy();
   chartDonut = new Chart(document.getElementById('chartDonut'), {
     type: 'doughnut',
-    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 1, borderColor: 'transparent' }] },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '62%',
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}h` } } }
-    }
+    data: { labels: categories.map(c=>c.name), datasets: [{ data: categories.map(c => Math.round((bycat[c.id]||0)*10)/10), backgroundColor: categories.map((_,i)=>COLORS[i%COLORS.length]), borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}h` } } } }
   });
 
-  renderTrendChart();
-  renderAlignment(bycat, totalH);
-}
+  const alignEl = document.getElementById('role-align');
+  if (totalH === 0) { alignEl.innerHTML = '<p style="color:#aaa;font-size:13px;padding:20px 0;">Aucune donnée pour la période.</p>'; }
+  else {
+    alignEl.innerHTML = categories.map((c,i) => {
+      const h = bycat[c.id]||0;
+      const pct = Math.round(h/totalH*100);
+      const diff = pct - (c.target||0);
+      const col = Math.abs(diff)<=5 ? '#1D9E75' : diff>5 ? '#E24B4A' : '#BA7517';
+      return `<div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:13px;font-weight:500;">${c.name}</span>
+          <span style="font-size:12px;color:${col};font-weight:600;">${pct}% <span style="color:#aaa;font-weight:400;">/ cible ${c.target||0}%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${COLORS[i%COLORS.length]};"></div></div>
+      </div>`;
+    }).join('');
+  }
 
-function renderTrendChart() {
   const now = new Date();
-  const months = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
-    return { year: d.getFullYear(), month: d.getMonth(), label: MONTHS_FR[d.getMonth()] };
-  });
-
-  const datasets = categories.map((c, i) => ({
+  const months = Array.from({length:6}, (_,i) => { const d = new Date(now.getFullYear(), now.getMonth()-5+i, 1); return {year:d.getFullYear(),month:d.getMonth(),label:MONTHS_FR[d.getMonth()]}; });
+  const datasets = categories.map((c,i) => ({
     label: c.name,
-    data: months.map(m => {
-      return entries.filter(e => {
-        const d = new Date(e.date);
-        return e.catId == c.id && d.getFullYear() === m.year && d.getMonth() === m.month;
-      }).reduce((s, e) => s + (parseFloat(e.heures) || 0), 0);
-    }),
-    borderColor: COLORS[i % COLORS.length],
-    backgroundColor: COLORS[i % COLORS.length] + '22',
-    tension: 0.3, fill: false, pointRadius: 3
+    data: months.map(m => Math.round(entries.filter(e => { const d=new Date(e.date); return e.catId==c.id&&d.getFullYear()===m.year&&d.getMonth()===m.month; }).reduce((s,e)=>s+(parseFloat(e.heures)||0),0)*10)/10),
+    borderColor: COLORS[i%COLORS.length], backgroundColor: COLORS[i%COLORS.length]+'20', tension: 0.3, fill: false, pointRadius: 4
   }));
-
   if (chartTrend) chartTrend.destroy();
   chartTrend = new Chart(document.getElementById('chartTrend'), {
     type: 'line',
-    data: { labels: months.map(m => m.label), datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { callback: v => v + 'h' } } }
-    }
+    data: { labels: months.map(m=>m.label), datasets },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v+'h' } } } }
   });
-}
-
-function renderAlignment(bycat, totalH) {
-  const el = document.getElementById('role-alignment');
-  if (totalH === 0) { el.innerHTML = '<p style="font-size:13px;color:var(--color-text-secondary);">Aucune donnée pour la période.</p>'; return; }
-  el.innerHTML = categories.map((c, i) => {
-    const h = bycat[c.id] || 0;
-    const pct = totalH > 0 ? Math.round(h / totalH * 100) : 0;
-    const diff = pct - (c.target || 0);
-    const status = Math.abs(diff) <= 5 ? '#1D9E75' : diff > 5 ? '#E24B4A' : '#BA7517';
-    return `<div style="margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;">
-        <span style="font-size:13px;">${c.name}</span>
-        <span style="font-size:12px;color:${status};font-weight:500;">${pct}% <span style="color:var(--color-text-secondary);font-weight:400;">/ cible ${c.target || 0}%</span></span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${COLORS[i % COLORS.length]};"></div></div>
-    </div>`;
-  }).join('');
 }
 
 function renderJournal() {
   const filterCat = document.getElementById('filter-cat').value;
   const filterMonth = document.getElementById('filter-month').value;
-
-  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>' +
-    categories.map(c => `<option value="${c.id}" ${filterCat == c.id ? 'selected' : ''}>${c.name}</option>`).join('');
-  document.getElementById('filter-cat').value = filterCat;
-
-  const allMonths = [...new Set(entries.map(e => e.date.slice(0, 7)))].sort().reverse();
-  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>' +
-    allMonths.map(m => `<option value="${m}" ${filterMonth === m ? 'selected' : ''}>${m}</option>`).join('');
-  document.getElementById('filter-month').value = filterMonth;
-
-  let list = [...entries].sort((a, b) => b.date.localeCompare(a.date));
-  if (filterCat) list = list.filter(e => e.catId == filterCat);
-  if (filterMonth) list = list.filter(e => e.date.startsWith(filterMonth));
-
+  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>' + categories.map(c=>`<option value="${c.id}" ${filterCat==c.id?'selected':''}>${c.name}</option>`).join('');
+  const allMonths = [...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
+  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>' + allMonths.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('');
+  let list = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  if (filterCat) list = list.filter(e=>e.catId==filterCat);
+  if (filterMonth) list = list.filter(e=>e.date.startsWith(filterMonth));
   const el = document.getElementById('journal-table');
-  if (list.length === 0) { el.innerHTML = '<div class="empty-state">Aucune activité enregistrée.<br>Utilisez l\'onglet Saisie pour commencer.</div>'; return; }
-
-  el.innerHTML = `<table class="log-table"><thead><tr>
-    <th>Date</th><th>Catégorie</th><th>Description</th><th style="text-align:right;">Heures</th><th style="text-align:right;">Actions</th><th></th>
-  </tr></thead><tbody>` +
-    list.map(e => {
-      const cat = getCatById(e.catId);
-      const col = getCatColor(e.catId);
-      return `<tr>
-        <td style="white-space:nowrap;">${e.date}</td>
-        <td><span class="badge" style="background:${col}22;color:${col};">${cat.name}</span></td>
-        <td>${e.desc || '—'}${e.notes ? `<br><span style="font-size:11px;color:var(--color-text-secondary);">${e.notes}</span>` : ''}</td>
-        <td style="text-align:right;">${e.heures || '—'}</td>
-        <td style="text-align:right;">${e.actions || '—'}</td>
-        <td><button class="btn danger" style="padding:2px 8px;font-size:11px;" onclick="deleteEntry('${e.id}')">Suppr.</button></td>
-      </tr>`;
-    }).join('') + '</tbody></table>';
+  if (!list.length) { el.innerHTML = '<div class="empty">Aucune activité enregistrée.<br>Commencez par l\'onglet Saisie.</div>'; return; }
+  el.innerHTML = `<table class="log-table"><thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Heures</th><th>Actions</th><th></th></tr></thead><tbody>`+
+  list.map(e => {
+    const cat = getCatById(e.catId), col = getCatColor(e.catId);
+    return `<tr><td style="white-space:nowrap">${e.date}</td><td><span class="badge" style="background:${col}22;color:${col}">${cat.name}</span></td><td>${e.desc||'—'}${e.notes?`<br><span style="font-size:11px;color:#aaa">${e.notes}</span>`:''}</td><td style="text-align:center">${e.heures||'—'}</td><td style="text-align:center">${e.actions||'—'}</td><td><button class="btn danger sm" onclick="window.deleteEntry('${e._docId}')">Suppr.</button></td></tr>`;
+  }).join('')+'</tbody></table>';
 }
 
 function populateCatSelect() {
-  document.getElementById('f-cat').innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  const today = new Date().toISOString().slice(0, 10);
-  if (!document.getElementById('f-date').value) document.getElementById('f-date').value = today;
-}
-
-function saveEntry() {
-  const date = document.getElementById('f-date').value;
-  const catId = document.getElementById('f-cat').value;
-  const desc = document.getElementById('f-desc').value.trim();
-  const heures = document.getElementById('f-heures').value;
-  const actions = document.getElementById('f-actions').value;
-  const notes = document.getElementById('f-notes').value.trim();
-  if (!date || !catId) { document.getElementById('form-msg').style.color = 'var(--color-text-danger)'; document.getElementById('form-msg').textContent = 'Veuillez renseigner la date et la catégorie.'; return; }
-  const entry = { id: Date.now().toString(), date, catId: parseInt(catId), desc, heures: parseFloat(heures) || 0, actions: parseInt(actions) || 0, notes };
-  entries.push(entry);
-  save();
-  document.getElementById('form-msg').style.color = 'var(--color-text-success)';
-  document.getElementById('form-msg').textContent = 'Activité enregistrée !';
-  setTimeout(() => document.getElementById('form-msg').textContent = '', 2000);
-  clearForm();
-}
-
-function clearForm() {
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-heures').value = '';
-  document.getElementById('f-actions').value = '';
-  document.getElementById('f-notes').value = '';
-}
-
-function deleteEntry(id) {
-  if (!confirm('Supprimer cette entrée ?')) return;
-  entries = entries.filter(e => e.id !== id);
-  save();
-  renderJournal();
+  document.getElementById('f-cat').innerHTML = categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  if (!document.getElementById('f-date').value) document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
 }
 
 function renderSettings() {
-  document.getElementById('cat-list').innerHTML = categories.map((c, i) => `
+  document.getElementById('cat-list').innerHTML = categories.map((c,i) => `
     <div class="cat-item">
-      <div class="cat-color" style="background:${COLORS[i % COLORS.length]};"></div>
-      <div class="cat-name">${c.name}</div>
-      <div class="cat-target">Cible : <input type="number" value="${c.target || 0}" min="0" max="100" style="width:48px;font-size:12px;text-align:right;" onchange="updateTarget(${c.id}, this.value)">%</div>
-      <button class="btn danger" style="padding:2px 8px;font-size:11px;" onclick="deleteCategory(${c.id})">Suppr.</button>
-    </div>
-  `).join('');
+      <div style="width:14px;height:14px;border-radius:3px;background:${COLORS[i%COLORS.length]};flex-shrink:0;"></div>
+      <div style="flex:1;font-size:14px;font-weight:500;">${c.name}</div>
+      <div style="font-size:13px;color:#666;">Cible : <input type="number" value="${c.target||0}" min="0" max="100" style="width:52px;font-size:13px;padding:4px 6px;" onchange="window.updateTarget(${c.id},this.value)"> %</div>
+      <button class="btn danger sm" onclick="window.deleteCategory(${c.id})">Suppr.</button>
+    </div>`).join('');
 }
 
-function updateTarget(id, val) {
-  const c = categories.find(c => c.id == id);
-  if (c) c.target = parseInt(val) || 0;
-  save();
-}
+window.showTab = function(t, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(t==='dashboard') renderDashboard();
+  if(t==='journal') renderJournal();
+  if(t==='parametres') renderSettings();
+  if(t==='saisie') populateCatSelect();
+};
 
-function addCategory() {
+window.setPeriod = function(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('period-label').textContent = {month:'Ce mois-ci',year:'Cette année',all:'Tout'}[p];
+  renderDashboard();
+};
+
+window.saveEntry = async function() {
+  const date = document.getElementById('f-date').value;
+  const catId = parseInt(document.getElementById('f-cat').value);
+  const desc = document.getElementById('f-desc').value.trim();
+  const heures = parseFloat(document.getElementById('f-heures').value)||0;
+  const actions = parseInt(document.getElementById('f-actions').value)||0;
+  const notes = document.getElementById('f-notes').value.trim();
+  if (!date||!catId) { showStatus('form-status','Veuillez renseigner la date et la catégorie.','err'); return; }
+  try {
+    setSyncStatus('Enregistrement...', null);
+    const entry = { date, catId, desc, heures, actions, notes, createdAt: new Date().toISOString() };
+    const ref = await addDoc(collection(db, 'pls_entries'), entry);
+    entries.unshift({ ...entry, _docId: ref.id });
+    setSyncStatus('Synchronisé', true);
+    showStatus('form-status','Activité enregistrée et sauvegardée dans Firebase !','ok');
+    clearForm(); renderDashboard();
+  } catch(e) { showStatus('form-status','Erreur : '+e.message,'err'); setSyncStatus('Erreur','false'); }
+};
+
+window.clearForm = function() { ['f-desc','f-heures','f-actions','f-notes'].forEach(id=>document.getElementById(id).value=''); };
+
+window.deleteEntry = async function(docId) {
+  if(!confirm('Supprimer cette entrée ?')) return;
+  try {
+    await deleteDoc(doc(db,'pls_entries',docId));
+    entries = entries.filter(e=>e._docId!==docId);
+    renderJournal(); renderDashboard(); setSyncStatus('Synchronisé',true);
+  } catch(e) { setSyncStatus('Erreur suppression',false); }
+};
+
+window.updateTarget = async function(id, val) {
+  const c = categories.find(c=>c.id==id);
+  if(c) c.target = parseInt(val)||0;
+  await saveCategories();
+  setSyncStatus('Synchronisé',true);
+};
+
+window.addCategory = async function() {
   const name = document.getElementById('new-cat-name').value.trim();
-  const target = parseInt(document.getElementById('new-cat-target').value) || 0;
-  if (!name) return;
+  const target = parseInt(document.getElementById('new-cat-target').value)||0;
+  if(!name) return;
   categories.push({ id: Date.now(), name, target });
-  save();
-  document.getElementById('new-cat-name').value = '';
-  document.getElementById('new-cat-target').value = '';
-  document.getElementById('cat-msg').textContent = 'Catégorie ajoutée !';
-  setTimeout(() => document.getElementById('cat-msg').textContent = '', 2000);
-  renderSettings();
-  populateCatSelect();
-}
+  await saveCategories();
+  document.getElementById('new-cat-name').value='';
+  document.getElementById('new-cat-target').value='';
+  showStatus('cat-status','Catégorie ajoutée et sauvegardée !','ok');
+  renderSettings(); populateCatSelect();
+};
 
-function deleteCategory(id) {
-  if (!confirm('Supprimer cette catégorie ?')) return;
-  categories = categories.filter(c => c.id !== id);
-  save();
-  renderSettings();
-}
+window.deleteCategory = async function(id) {
+  if(!confirm('Supprimer cette catégorie ?')) return;
+  categories = categories.filter(c=>c.id!==id);
+  await saveCategories(); renderSettings();
+};
 
-function exportCSV() {
+window.exportCSV = function() {
   const rows = [['Date','Catégorie','Description','Heures','Actions','Notes']];
-  entries.forEach(e => rows.push([e.date, getCatById(e.catId).name, e.desc, e.heures, e.actions, e.notes]));
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'activites_PLS.csv'; a.click();
-}
+  entries.forEach(e=>rows.push([e.date,getCatById(e.catId).name,e.desc,e.heures,e.actions,e.notes]));
+  const csv = rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='activites_PLS.csv'; a.click();
+};
 
-function exportJSON() {
-  const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({ categories, entries }));
-  a.download = 'activites_PLS.json'; a.click();
-}
+window.exportJSON = function() {
+  const a = document.createElement('a'); a.href='data:application/json,'+encodeURIComponent(JSON.stringify({categories,entries})); a.download='activites_PLS.json'; a.click();
+};
 
-function clearAll() {
-  if (!confirm('Réinitialiser toutes les données ?')) return;
-  entries = []; save(); renderDashboard();
-}
+window.clearAll = async function() {
+  if(!confirm('Réinitialiser TOUTES les données ? Action irréversible.')) return;
+  const snap = await getDocs(collection(db,'pls_entries'));
+  await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
+  entries = []; renderDashboard(); renderJournal(); setSyncStatus('Réinitialisé',true);
+};
 
-populateCatSelect();
-renderDashboard();
-renderSettings();
+loadData();
 </script>
+</body>
+</html>
