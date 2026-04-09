@@ -2,93 +2,157 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suivi Activités — Responsable Adjoint Pôle PLS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Suivi Activités — Pôle PLS</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, sans-serif; background: #f4f4f2; color: #2c2c2a; min-height: 100vh; }
-.topbar { background: #4B3FA0; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
-.topbar .h1 { font-size: 15px; font-weight: 600; }
-.topbar .sub { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-.sync { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); }
-.container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: white; border-radius: 10px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.tab { flex: 1; padding: 10px; font-size: 14px; font-weight: 500; color: #888; cursor: pointer; border: none; background: none; border-radius: 8px; transition: all 0.15s; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f4f4f2; color: #2c2c2a; min-height: 100vh; font-size: 16px; }
+
+.topbar { background: #4B3FA0; color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.topbar .h1 { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.topbar .sub { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.sync { font-size: 11px; padding: 4px 8px; border-radius: 20px; background: rgba(255,255,255,0.15); white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+/* TABS — scrollable horizontally on mobile */
+.tabs-wrap { background: white; border-radius: 10px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 16px; display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tab { flex: 1; min-width: 80px; padding: 10px 8px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; border: none; background: none; border-radius: 8px; white-space: nowrap; touch-action: manipulation; }
 .tab.active { background: #4B3FA0; color: white; }
+
 .section { display: none; }
 .section.active { display: block; }
-.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-.metric { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
-.metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
-.metric-value { font-size: 26px; font-weight: 600; color: #2c2c2a; }
-.metric-sub { font-size: 11px; color: #aaa; margin-top: 3px; }
-.card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
-.card-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
-.chart-wrap { position: relative; width: 100%; height: 260px; }
-.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 5px; }
-.form-group.full { grid-column: 1/-1; }
+
+/* METRICS */
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.metric { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+.metric-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.metric-value { font-size: 24px; font-weight: 700; color: #2c2c2a; }
+.metric-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* CARDS */
+.card { background: white; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+.card-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+/* CHARTS */
+.chart-wrap { position: relative; width: 100%; height: 220px; }
+
+/* PERIOD BUTTONS */
+.period-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; flex-wrap: wrap; }
+.period-label { font-size: 13px; color: #888; }
+.period-btns { display: flex; gap: 6px; }
+.period-btn { padding: 6px 14px; font-size: 13px; border: 1px solid #e0e0e0; border-radius: 20px; background: white; color: #666; cursor: pointer; font-weight: 500; touch-action: manipulation; }
+.period-btn.active { background: #4B3FA0; color: white; border-color: #4B3FA0; }
+
+/* LEGEND */
+.legend-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #666; }
+.legend-sq { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+/* PROGRESS */
+.progress-bar { height: 8px; background: #f0f0ee; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+.progress-fill { height: 100%; border-radius: 4px; }
+
+/* FORMS */
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
 label { font-size: 13px; color: #666; font-weight: 500; }
-input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; color: #2c2c2a; background: #fafafa; transition: border 0.15s; }
+input, select, textarea {
+  width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px;
+  font-size: 16px; /* prevents iOS zoom */ font-family: inherit; color: #2c2c2a;
+  background: #fafafa; -webkit-appearance: none; appearance: none;
+}
 input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD; background: white; }
-.btn { padding: 10px 22px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: all 0.15s; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* BUTTONS */
+.btn { padding: 12px 20px; font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; border: none; transition: all 0.15s; touch-action: manipulation; display: inline-block; }
 .btn.primary { background: #4B3FA0; color: white; }
-.btn.primary:hover { background: #3C3489; }
 .btn.secondary { background: #f0f0ee; color: #444; }
-.btn.secondary:hover { background: #e4e4e0; }
 .btn.warning { background: #FFF8E1; color: #854F0B; border: 1px solid #EF9F27; }
 .btn.danger { background: #fff0f0; color: #A32D2D; border: 1px solid #f0c0c0; }
-.btn.success { background: #E1F5EE; color: #0F6E56; border: 1px solid #1D9E75; }
-.btn.sm { padding: 5px 12px; font-size: 12px; }
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-.status-msg { font-size: 13px; padding: 8px 14px; border-radius: 8px; margin-top: 10px; display: none; }
+.btn.sm { padding: 7px 12px; font-size: 13px; border-radius: 8px; }
+.btn.full { width: 100%; text-align: center; margin-bottom: 8px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* STATUS */
+.status-msg { font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-top: 10px; display: none; }
 .status-msg.show { display: block; }
 .status-msg.ok { background: #E1F5EE; color: #0F6E56; }
 .status-msg.err { background: #FCEBEB; color: #A32D2D; }
 .status-msg.warn { background: #FFF8E1; color: #854F0B; }
-.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.log-table th { text-align: left; padding: 8px 10px; color: #888; font-weight: 500; border-bottom: 1px solid #f0f0ee; font-size: 12px; }
-.log-table td { padding: 10px; border-bottom: 1px solid #f7f7f5; color: #2c2c2a; vertical-align: top; }
-.log-table tr:hover td { background: #fafaf8; }
+
+/* JOURNAL TABLE — card-list on mobile */
+.journal-list { display: flex; flex-direction: column; gap: 8px; }
+.journal-card { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+.journal-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+.journal-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.journal-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.journal-card-desc { font-size: 14px; color: #2c2c2a; margin-bottom: 4px; }
+.journal-card-notes { font-size: 12px; color: #aaa; }
+.journal-card-stats { display: flex; gap: 12px; margin-top: 8px; font-size: 12px; color: #888; }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
-.empty { text-align: center; padding: 60px 20px; color: #aaa; font-size: 14px; }
-.period-btn { padding: 6px 14px; font-size: 13px; border: 1px solid #e0e0e0; border-radius: 20px; background: white; color: #666; cursor: pointer; font-weight: 500; }
-.period-btn.active { background: #4B3FA0; color: white; border-color: #4B3FA0; }
-.legend-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
-.legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.progress-bar { height: 8px; background: #f0f0ee; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-.progress-fill { height: 100%; border-radius: 4px; }
-.cat-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px; }
-.filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-.filter-row select { width: auto; }
-.modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-.modal-overlay.show { display: flex; }
-.modal { background: white; border-radius: 12px; padding: 24px; max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto; }
-.modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-.modal p { font-size: 14px; color: #555; margin-bottom: 16px; line-height: 1.6; }
-.modal .btn-row { justify-content: flex-end; }
-.import-preview { max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; font-size: 12px; }
-.import-row { padding: 6px 10px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 8px; align-items: center; }
+.date-chip { font-size: 12px; color: #888; white-space: nowrap; }
+
+/* FILTERS */
+.filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.filter-row select { flex: 1; min-width: 140px; font-size: 14px; padding: 10px 36px 10px 12px; }
+
+/* CATEGORIES */
+.cat-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 8px; }
+.cat-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+.cat-name { flex: 1; font-size: 14px; font-weight: 500; }
+.cat-target { font-size: 12px; color: #888; }
+
+/* IMPORT */
+.drop-zone { border: 2px dashed #e0e0e0; border-radius: 10px; padding: 24px 16px; text-align: center; color: #aaa; font-size: 14px; cursor: pointer; margin-bottom: 12px; }
+.drop-zone:active { border-color: #7F77DD; background: #f5f4ff; }
+.import-preview { max-height: 220px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; font-size: 12px; margin-top: 8px; }
+.import-row { padding: 8px 10px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 8px; align-items: flex-start; }
 .import-row:last-child { border-bottom: none; }
 .import-row.ok { background: #f0faf6; }
 .import-row.warn { background: #fffbf0; }
 .import-row.dup { background: #fff5f5; }
 .import-row.skip { background: #f8f8f8; color: #aaa; }
-.tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+.tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; flex-shrink: 0; }
 .tag.ok { background: #E1F5EE; color: #0F6E56; }
 .tag.warn { background: #FFF8E1; color: #854F0B; }
 .tag.dup { background: #FCEBEB; color: #A32D2D; }
 .tag.skip { background: #f0f0ee; color: #888; }
-.drop-zone { border: 2px dashed #e0e0e0; border-radius: 10px; padding: 30px; text-align: center; color: #aaa; font-size: 14px; cursor: pointer; transition: all 0.15s; margin-bottom: 12px; }
-.drop-zone:hover, .drop-zone.drag { border-color: #7F77DD; background: #f5f4ff; color: #4B3FA0; }
-.section-divider { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0ee; }
-@media (max-width: 600px) {
-  .metrics { grid-template-columns: 1fr 1fr; }
-  .chart-row { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr; }
-  .form-group.full { grid-column: 1; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: white; border-radius: 16px 16px 0 0; padding: 24px 16px 32px; width: 100%; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+.modal p { font-size: 14px; color: #555; margin-bottom: 16px; line-height: 1.6; }
+.modal .btn-row { margin-top: 4px; }
+.modal .btn { width: 100%; margin-bottom: 8px; text-align: center; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
+
+/* DESKTOP enhancements */
+@media (min-width: 700px) {
+  .container { padding: 24px; }
+  .metrics { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .chart-wrap { height: 260px; }
+  .modal-overlay { align-items: center; }
+  .modal { border-radius: 16px; max-width: 520px; padding: 28px; }
+  .modal .btn { width: auto; }
+  .journal-list { display: none; }
+  .journal-table-wrap { display: block; }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log-table th { text-align: left; padding: 8px 10px; color: #888; font-weight: 500; border-bottom: 1px solid #f0f0ee; font-size: 12px; }
+  .log-table td { padding: 10px; border-bottom: 1px solid #f7f7f5; vertical-align: top; }
+  .log-table tr:hover td { background: #fafaf8; }
+  .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn.full { width: auto; }
+}
+@media (max-width: 699px) {
+  .journal-table-wrap { display: none; }
 }
 </style>
 </head>
@@ -96,14 +160,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
 
 <div class="topbar">
   <div>
-    <div class="h1">Suivi Activités — Responsable Adjoint Pôle PLS</div>
-    <div class="sub">Université Paris-Est Créteil</div>
+    <div class="h1">Suivi Activités — Pôle PLS</div>
+    <div class="sub">UPEC</div>
   </div>
   <div class="sync" id="sync-status">Connexion...</div>
 </div>
 
 <div class="container">
-  <div class="tabs">
+  <div class="tabs-wrap">
     <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
     <button class="tab" onclick="showTab('saisie',this)">Saisie</button>
     <button class="tab" onclick="showTab('journal',this)">Journal</button>
@@ -112,20 +176,20 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
 
   <!-- DASHBOARD -->
   <div id="tab-dashboard" class="section active">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-size:14px;color:#888;" id="period-label">Ce mois-ci</div>
-      <div style="display:flex;gap:6px;">
+    <div class="period-row">
+      <span class="period-label" id="period-label">Ce mois-ci</span>
+      <div class="period-btns">
         <button class="period-btn active" onclick="setPeriod('month',this)">Mois</button>
         <button class="period-btn" onclick="setPeriod('year',this)">Année</button>
         <button class="period-btn" onclick="setPeriod('all',this)">Tout</button>
       </div>
     </div>
     <div class="metrics" id="metrics-row"></div>
-    <div class="chart-row">
+    <div id="chart-row-wrap">
       <div class="card">
         <div class="card-title">Répartition par catégorie</div>
         <div class="legend-row" id="legend-row"></div>
-        <div class="chart-wrap" style="height:220px;"><canvas id="chartDonut"></canvas></div>
+        <div class="chart-wrap" style="height:200px;"><canvas id="chartDonut"></canvas></div>
       </div>
       <div class="card">
         <div class="card-title">Alignement sur le rôle</div>
@@ -142,18 +206,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
   <div id="tab-saisie" class="section">
     <div class="card">
       <div class="card-title">Nouvelle activité</div>
-      <div class="form-grid">
+      <div class="form-2col">
         <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
         <div class="form-group"><label>Catégorie</label><select id="f-cat"></select></div>
-        <div class="form-group full"><label>Description de l'activité</label><input type="text" id="f-desc" placeholder="Ex : réunion de coordination équipe PLS"></div>
-        <div class="form-group"><label>Durée (heures)</label><input type="number" id="f-heures" min="0" step="0.25" placeholder="1.5"></div>
-        <div class="form-group"><label>Nombre d'actions</label><input type="number" id="f-actions" min="0" step="1" placeholder="3"></div>
-        <div class="form-group full"><label>Notes / contexte</label><textarea id="f-notes" rows="2" placeholder="Optionnel…"></textarea></div>
       </div>
-      <div class="btn-row">
-        <button class="btn primary" onclick="saveEntry()">Enregistrer</button>
-        <button class="btn secondary" onclick="clearForm()">Effacer</button>
+      <div class="form-group"><label>Description de l'activité</label><input type="text" id="f-desc" placeholder="Ex : réunion de coordination équipe PLS"></div>
+      <div class="form-2col">
+        <div class="form-group"><label>Durée (heures)</label><input type="number" id="f-heures" min="0" step="0.25" placeholder="1.5" inputmode="decimal"></div>
+        <div class="form-group"><label>Nombre d'actions</label><input type="number" id="f-actions" min="0" step="1" placeholder="3" inputmode="numeric"></div>
       </div>
+      <div class="form-group"><label>Notes / contexte</label><textarea id="f-notes" rows="3" placeholder="Optionnel…"></textarea></div>
+      <button class="btn primary full" onclick="saveEntry()">Enregistrer</button>
+      <button class="btn secondary full" onclick="clearForm()">Effacer</button>
       <div class="status-msg" id="form-status"></div>
     </div>
   </div>
@@ -161,11 +225,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
   <!-- JOURNAL -->
   <div id="tab-journal" class="section">
     <div class="filter-row">
-      <select id="filter-cat" onchange="renderJournal()" style="font-size:13px;padding:6px 10px;width:auto;"></select>
-      <select id="filter-month" onchange="renderJournal()" style="font-size:13px;padding:6px 10px;width:auto;"></select>
-      <button class="btn secondary sm" onclick="exportCSV()">Exporter CSV</button>
+      <select id="filter-cat" onchange="renderJournal()"></select>
+      <select id="filter-month" onchange="renderJournal()"></select>
+      <button class="btn secondary sm" onclick="exportCSV()">Export CSV</button>
     </div>
-    <div class="card" style="padding:0;overflow:hidden;">
+    <!-- Mobile: cards -->
+    <div class="journal-list" id="journal-list"></div>
+    <!-- Desktop: table -->
+    <div class="journal-table-wrap card" style="padding:0;overflow:hidden;">
       <div id="journal-table"></div>
     </div>
   </div>
@@ -175,62 +242,48 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
     <div class="card">
       <div class="card-title">Catégories de missions</div>
       <div id="cat-list"></div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-        <input type="text" id="new-cat-name" placeholder="Nouvelle catégorie…" style="flex:1;min-width:160px;">
-        <input type="number" id="new-cat-target" placeholder="% cible" min="0" max="100" style="width:90px;">
-        <button class="btn primary" onclick="addCategory()">Ajouter</button>
+      <div style="margin-top:12px;">
+        <div class="form-group"><label>Nouvelle catégorie</label><input type="text" id="new-cat-name" placeholder="Nom…"></div>
+        <div class="form-group"><label>% cible</label><input type="number" id="new-cat-target" placeholder="ex: 15" min="0" max="100" inputmode="numeric" style="max-width:120px;"></div>
+        <button class="btn primary full" onclick="addCategory()">Ajouter la catégorie</button>
       </div>
-      <div class="status-msg" id="cat-status" style="margin-top:10px;"></div>
+      <div class="status-msg" id="cat-status"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Import de données CSV</div>
-      <p style="font-size:13px;color:#666;margin-bottom:12px;">Format attendu : <code style="background:#f0f0ee;padding:2px 6px;border-radius:4px;">Date,Catégorie,Description,Heures,Actions,Notes</code><br>
-      La date doit être au format <strong>AAAA-MM-JJ</strong>. Les catégories inconnues seront signalées.</p>
-      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()">
-        Glissez-déposez un fichier CSV ici ou cliquez pour choisir
+      <div class="card-title">Import CSV</div>
+      <p style="font-size:13px;color:#666;margin-bottom:12px;">Format : <code style="background:#f0f0ee;padding:2px 6px;border-radius:4px;font-size:12px;">Date,Catégorie,Description,Heures,Actions,Notes</code> — Date au format <strong>AAAA-MM-JJ</strong></p>
+      <div class="drop-zone" onclick="document.getElementById('csv-input').click()">
+        Appuyez pour choisir un fichier CSV
         <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleCSVFile(this)">
       </div>
       <div id="import-preview-area" style="display:none;">
-        <div class="section-divider">Aperçu de l'import</div>
         <div class="import-preview" id="import-preview"></div>
-        <div style="margin-top:10px;font-size:13px;color:#666;" id="import-summary"></div>
-        <div class="btn-row" style="margin-top:12px;">
-          <button class="btn primary" onclick="confirmImport()">Confirmer l'import</button>
-          <button class="btn secondary" onclick="cancelImport()">Annuler</button>
-        </div>
+        <p style="font-size:13px;color:#666;margin-top:8px;" id="import-summary"></p>
+        <button class="btn primary full" style="margin-top:12px;" onclick="confirmImport()">Confirmer l'import</button>
+        <button class="btn secondary full" onclick="cancelImport()">Annuler</button>
         <div class="status-msg" id="import-status"></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Export & données</div>
-      <div class="btn-row">
-        <button class="btn secondary" onclick="exportCSV()">Exporter CSV (Journal)</button>
-        <button class="btn secondary" onclick="exportJSON()">Exporter JSON</button>
-        <button class="btn danger" onclick="clearAll()">Réinitialiser toutes les données</button>
-      </div>
+      <button class="btn secondary full" onclick="exportCSV()">Exporter CSV</button>
+      <button class="btn secondary full" onclick="exportJSON()">Exporter JSON</button>
+      <button class="btn danger full" onclick="clearAll()">Réinitialiser toutes les données</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL RENOMMER CATÉGORIE -->
+<!-- MODAL RENOMMER -->
 <div class="modal-overlay" id="modal-rename">
   <div class="modal">
     <h3>Modifier la catégorie</h3>
     <p id="modal-rename-msg"></p>
-    <div class="form-group" style="margin-bottom:12px;">
-      <label>Nouveau nom</label>
-      <input type="text" id="modal-new-name">
-    </div>
-    <div class="form-group" style="margin-bottom:16px;">
-      <label>% cible</label>
-      <input type="number" id="modal-new-target" min="0" max="100" style="width:100px;">
-    </div>
-    <div class="btn-row">
-      <button class="btn warning" onclick="confirmRename()">Valider la modification</button>
-      <button class="btn secondary" onclick="closeModal('modal-rename')">Annuler</button>
-    </div>
+    <div class="form-group"><label>Nouveau nom</label><input type="text" id="modal-new-name"></div>
+    <div class="form-group"><label>% cible</label><input type="number" id="modal-new-target" min="0" max="100" inputmode="numeric"></div>
+    <button class="btn warning full" onclick="confirmRename()">Valider la modification</button>
+    <button class="btn secondary full" onclick="closeModal('modal-rename')">Annuler</button>
   </div>
 </div>
 
@@ -239,10 +292,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
   <div class="modal">
     <h3>Supprimer la catégorie</h3>
     <p id="modal-delete-cat-msg"></p>
-    <div class="btn-row">
-      <button class="btn danger" onclick="confirmDeleteCat()">Supprimer quand même</button>
-      <button class="btn secondary" onclick="closeModal('modal-delete-cat')">Annuler</button>
-    </div>
+    <button class="btn danger full" onclick="confirmDeleteCat()">Supprimer quand même</button>
+    <button class="btn secondary full" onclick="closeModal('modal-delete-cat')">Annuler</button>
   </div>
 </div>
 
@@ -250,18 +301,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #7F77DD
 <div class="modal-overlay" id="modal-edit-entry">
   <div class="modal">
     <h3>Modifier l'activité</h3>
-    <div class="form-grid" style="margin-top:12px;">
+    <div class="form-2col">
       <div class="form-group"><label>Date</label><input type="date" id="me-date"></div>
       <div class="form-group"><label>Catégorie</label><select id="me-cat"></select></div>
-      <div class="form-group full"><label>Description</label><input type="text" id="me-desc"></div>
-      <div class="form-group"><label>Heures</label><input type="number" id="me-heures" min="0" step="0.25"></div>
-      <div class="form-group"><label>Actions</label><input type="number" id="me-actions" min="0" step="1"></div>
-      <div class="form-group full"><label>Notes</label><textarea id="me-notes" rows="2"></textarea></div>
     </div>
-    <div class="btn-row">
-      <button class="btn primary" onclick="confirmEditEntry()">Enregistrer</button>
-      <button class="btn secondary" onclick="closeModal('modal-edit-entry')">Annuler</button>
+    <div class="form-group"><label>Description</label><input type="text" id="me-desc"></div>
+    <div class="form-2col">
+      <div class="form-group"><label>Heures</label><input type="number" id="me-heures" min="0" step="0.25" inputmode="decimal"></div>
+      <div class="form-group"><label>Actions</label><input type="number" id="me-actions" min="0" inputmode="numeric"></div>
     </div>
+    <div class="form-group"><label>Notes</label><textarea id="me-notes" rows="2"></textarea></div>
+    <button class="btn primary full" onclick="confirmEditEntry()">Enregistrer</button>
+    <button class="btn secondary full" onclick="closeModal('modal-edit-entry')">Annuler</button>
     <div class="status-msg" id="edit-entry-status"></div>
   </div>
 </div>
@@ -282,72 +333,57 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const COLORS = ['#7F77DD','#1D9E75','#D85A30','#D4537E','#378ADD','#BA7517','#639922'];
 const MONTHS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-let categories = [], entries = [], currentPeriod = 'month';
-let chartDonut = null, chartTrend = null;
-let pendingRename = null, pendingDeleteCat = null, pendingEditEntry = null, pendingImport = [];
+let categories=[], entries=[], currentPeriod='month';
+let chartDonut=null, chartTrend=null;
+let pendingRename=null, pendingDeleteCat=null, pendingEditEntry=null, pendingImport=[];
 
 function setSyncStatus(msg, ok) {
   const el = document.getElementById('sync-status');
   el.textContent = msg;
-  el.style.background = ok === true ? 'rgba(29,158,117,0.3)' : ok === false ? 'rgba(227,75,74,0.3)' : 'rgba(255,255,255,0.15)';
+  el.style.background = ok===true ? 'rgba(29,158,117,0.4)' : ok===false ? 'rgba(227,75,74,0.4)' : 'rgba(255,255,255,0.15)';
 }
-
 function showStatus(id, msg, type) {
   const el = document.getElementById(id);
-  el.textContent = msg;
-  el.className = 'status-msg show ' + type;
+  el.textContent = msg; el.className = 'status-msg show '+type;
   setTimeout(() => el.classList.remove('show'), 4000);
 }
-
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 async function loadData() {
   try {
-    setSyncStatus('Chargement...', null);
-    const catSnap = await getDoc(doc(db, 'pls_config', 'categories'));
-    if (catSnap.exists()) {
-      categories = catSnap.data().list;
-    } else {
+    setSyncStatus('Chargement…', null);
+    const catSnap = await getDoc(doc(db,'pls_config','categories'));
+    if (catSnap.exists()) { categories = catSnap.data().list; }
+    else {
       categories = [
-        { id: 1, name: 'Encadrement équipe', target: 25 },
-        { id: 2, name: 'Planification / Logistique', target: 20 },
-        { id: 3, name: 'Gestion RH', target: 15 },
-        { id: 4, name: 'Hygiène / Sécurité (ERP)', target: 15 },
-        { id: 5, name: 'Marchés publics', target: 10 },
-        { id: 6, name: 'Relations & coordination', target: 10 },
-        { id: 7, name: 'Administration / Divers', target: 5 },
+        {id:1,name:'Encadrement équipe',target:25},{id:2,name:'Planification / Logistique',target:20},
+        {id:3,name:'Gestion RH',target:15},{id:4,name:'Hygiène / Sécurité (ERP)',target:15},
+        {id:5,name:'Marchés publics',target:10},{id:6,name:'Relations & coordination',target:10},
+        {id:7,name:'Administration / Divers',target:5},
       ];
       await saveCategories();
     }
-    const q = query(collection(db, 'pls_entries'), orderBy('date', 'desc'));
-    const snap = await getDocs(q);
-    entries = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+    const snap = await getDocs(query(collection(db,'pls_entries'), orderBy('date','desc')));
+    entries = snap.docs.map(d => ({...d.data(), _docId: d.id}));
     setSyncStatus('Synchronisé', true);
     renderAll();
-  } catch(e) {
-    setSyncStatus('Erreur Firebase', false);
-    console.error(e);
-  }
+  } catch(e) { setSyncStatus('Erreur Firebase', false); console.error(e); }
 }
 
-async function saveCategories() {
-  await setDoc(doc(db, 'pls_config', 'categories'), { list: categories });
-}
-
-function getCatById(id) { return categories.find(c => c.id == id) || { name: '?', id: 0 }; }
-function getCatColor(id) { const i = categories.findIndex(c => c.id == id); return COLORS[i % COLORS.length]; }
-function getCatByName(name) { return categories.find(c => c.name.trim().toLowerCase() === name.trim().toLowerCase()); }
+async function saveCategories() { await setDoc(doc(db,'pls_config','categories'), {list: categories}); }
+function getCatById(id) { return categories.find(c=>c.id==id)||{name:'?',id:0}; }
+function getCatColor(id) { const i=categories.findIndex(c=>c.id==id); return COLORS[i%COLORS.length]; }
+function getCatByName(name) { return categories.find(c=>c.name.trim().toLowerCase()===name.trim().toLowerCase()); }
 
 function filteredEntries() {
   const now = new Date();
   return entries.filter(e => {
     const d = new Date(e.date);
-    if (currentPeriod === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-    if (currentPeriod === 'year') return d.getFullYear() === now.getFullYear();
+    if (currentPeriod==='month') return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+    if (currentPeriod==='year') return d.getFullYear()===now.getFullYear();
     return true;
   });
 }
@@ -356,397 +392,298 @@ function renderAll() { renderDashboard(); renderJournal(); renderSettings(); pop
 
 function renderDashboard() {
   const fe = filteredEntries();
-  const totalH = fe.reduce((s,e) => s+(parseFloat(e.heures)||0), 0);
-  const totalA = fe.reduce((s,e) => s+(parseInt(e.actions)||0), 0);
-  const jours = [...new Set(fe.map(e => e.date))].length;
-  const avgH = jours > 0 ? totalH/jours : 0;
+  const totalH = fe.reduce((s,e)=>s+(parseFloat(e.heures)||0),0);
+  const totalA = fe.reduce((s,e)=>s+(parseInt(e.actions)||0),0);
+  const jours = [...new Set(fe.map(e=>e.date))].length;
+  const avgH = jours>0 ? totalH/jours : 0;
   document.getElementById('metrics-row').innerHTML = `
     <div class="metric"><div class="metric-label">Heures totales</div><div class="metric-value">${totalH.toFixed(1)}</div><div class="metric-sub">${jours} jour(s)</div></div>
-    <div class="metric"><div class="metric-label">Actions réalisées</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches</div></div>
-    <div class="metric"><div class="metric-label">Moyenne / jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
-    <div class="metric"><div class="metric-label">Activités saisies</div><div class="metric-value">${fe.length}</div><div class="metric-sub">entrées</div></div>
-  `;
-  const bycat = {};
-  categories.forEach(c => bycat[c.id] = 0);
-  fe.forEach(e => { bycat[e.catId] = (bycat[e.catId]||0) + (parseFloat(e.heures)||0); });
+    <div class="metric"><div class="metric-label">Actions</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches</div></div>
+    <div class="metric"><div class="metric-label">Moy./jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
+    <div class="metric"><div class="metric-label">Entrées</div><div class="metric-value">${fe.length}</div><div class="metric-sub">activités</div></div>`;
 
-  document.getElementById('legend-row').innerHTML = categories.map((c,i) =>
-    `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i%COLORS.length]}"></span>${c.name}</span>`
-  ).join('');
+  const bycat={};
+  categories.forEach(c=>bycat[c.id]=0);
+  fe.forEach(e=>{bycat[e.catId]=(bycat[e.catId]||0)+(parseFloat(e.heures)||0);});
 
-  if (chartDonut) chartDonut.destroy();
+  document.getElementById('legend-row').innerHTML = categories.map((c,i)=>
+    `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i%COLORS.length]}"></span>${c.name}</span>`).join('');
+
+  if(chartDonut) chartDonut.destroy();
   chartDonut = new Chart(document.getElementById('chartDonut'), {
-    type: 'doughnut',
-    data: { labels: categories.map(c=>c.name), datasets: [{ data: categories.map(c => Math.round((bycat[c.id]||0)*10)/10), backgroundColor: categories.map((_,i)=>COLORS[i%COLORS.length]), borderWidth: 2, borderColor: '#fff' }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}h` } } } }
+    type:'doughnut',
+    data:{labels:categories.map(c=>c.name),datasets:[{data:categories.map(c=>Math.round((bycat[c.id]||0)*10)/10),backgroundColor:categories.map((_,i)=>COLORS[i%COLORS.length]),borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw.toFixed(1)}h`}}}}
   });
 
   const alignEl = document.getElementById('role-align');
-  if (totalH === 0) { alignEl.innerHTML = '<p style="color:#aaa;font-size:13px;padding:20px 0;">Aucune donnée pour la période.</p>'; }
+  if (totalH===0) { alignEl.innerHTML='<p style="color:#aaa;font-size:13px;padding:10px 0;">Aucune donnée pour la période.</p>'; }
   else {
-    alignEl.innerHTML = categories.map((c,i) => {
-      const h = bycat[c.id]||0;
-      const pct = Math.round(h/totalH*100);
-      const diff = pct - (c.target||0);
-      const col = Math.abs(diff)<=5 ? '#1D9E75' : diff>5 ? '#E24B4A' : '#BA7517';
-      return `<div style="margin-bottom:14px;">
+    alignEl.innerHTML = categories.map((c,i)=>{
+      const h=bycat[c.id]||0, pct=Math.round(h/totalH*100), diff=pct-(c.target||0);
+      const col=Math.abs(diff)<=5?'#1D9E75':diff>5?'#E24B4A':'#BA7517';
+      return `<div style="margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
           <span style="font-size:13px;font-weight:500;">${c.name}</span>
-          <span style="font-size:12px;color:${col};font-weight:600;">${pct}% <span style="color:#aaa;font-weight:400;">/ cible ${c.target||0}%</span></span>
+          <span style="font-size:12px;color:${col};font-weight:600;">${pct}% <span style="color:#aaa;font-weight:400;">/ ${c.target||0}%</span></span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${COLORS[i%COLORS.length]};"></div></div>
       </div>`;
     }).join('');
   }
 
-  const now = new Date();
-  const months = Array.from({length:6}, (_,i) => { const d = new Date(now.getFullYear(), now.getMonth()-5+i, 1); return {year:d.getFullYear(),month:d.getMonth(),label:MONTHS_FR[d.getMonth()]}; });
-  const datasets = categories.map((c,i) => ({
-    label: c.name,
-    data: months.map(m => Math.round(entries.filter(e => { const d=new Date(e.date); return e.catId==c.id&&d.getFullYear()===m.year&&d.getMonth()===m.month; }).reduce((s,e)=>s+(parseFloat(e.heures)||0),0)*10)/10),
-    borderColor: COLORS[i%COLORS.length], backgroundColor: COLORS[i%COLORS.length]+'20', tension: 0.3, fill: false, pointRadius: 4
+  const now=new Date();
+  const months=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return{year:d.getFullYear(),month:d.getMonth(),label:MONTHS_FR[d.getMonth()]};});
+  const datasets=categories.map((c,i)=>({
+    label:c.name,
+    data:months.map(m=>Math.round(entries.filter(e=>{const d=new Date(e.date);return e.catId==c.id&&d.getFullYear()===m.year&&d.getMonth()===m.month;}).reduce((s,e)=>s+(parseFloat(e.heures)||0),0)*10)/10),
+    borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+'20',tension:0.3,fill:false,pointRadius:3
   }));
-  if (chartTrend) chartTrend.destroy();
-  chartTrend = new Chart(document.getElementById('chartTrend'), {
-    type: 'line',
-    data: { labels: months.map(m=>m.label), datasets },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v+'h' } } } }
+  if(chartTrend) chartTrend.destroy();
+  chartTrend = new Chart(document.getElementById('chartTrend'),{
+    type:'line',data:{labels:months.map(m=>m.label),datasets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'h'}}}}
   });
 }
 
 function renderJournal() {
   const filterCat = document.getElementById('filter-cat').value;
   const filterMonth = document.getElementById('filter-month').value;
-  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>' + categories.map(c=>`<option value="${c.id}" ${filterCat==c.id?'selected':''}>${c.name}</option>`).join('');
-  const allMonths = [...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
-  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>' + allMonths.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('');
-  let list = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  if (filterCat) list = list.filter(e=>e.catId==filterCat);
-  if (filterMonth) list = list.filter(e=>e.date.startsWith(filterMonth));
-  const el = document.getElementById('journal-table');
-  if (!list.length) { el.innerHTML = '<div class="empty">Aucune activité enregistrée.</div>'; return; }
-  el.innerHTML = `<table class="log-table"><thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Heures</th><th>Actions</th><th></th></tr></thead><tbody>`+
-  list.map(e => {
-    const cat = getCatById(e.catId), col = getCatColor(e.catId);
-    return `<tr>
-      <td style="white-space:nowrap">${e.date}</td>
-      <td><span class="badge" style="background:${col}22;color:${col}">${cat.name}</span></td>
-      <td>${e.desc||'—'}${e.notes?`<br><span style="font-size:11px;color:#aaa">${e.notes}</span>`:''}</td>
-      <td style="text-align:center">${e.heures||'—'}</td>
-      <td style="text-align:center">${e.actions||'—'}</td>
-      <td style="white-space:nowrap">
-        <button class="btn secondary sm" style="margin-right:4px;" onclick="window.openEditEntry('${e._docId}')">Modifier</button>
-        <button class="btn danger sm" onclick="window.deleteEntry('${e._docId}')">Suppr.</button>
-      </td>
-    </tr>`;
+  document.getElementById('filter-cat').innerHTML = '<option value="">Toutes catégories</option>'+categories.map(c=>`<option value="${c.id}" ${filterCat==c.id?'selected':''}>${c.name}</option>`).join('');
+  const allMonths=[...new Set(entries.map(e=>e.date.slice(0,7)))].sort().reverse();
+  document.getElementById('filter-month').innerHTML = '<option value="">Tous les mois</option>'+allMonths.map(m=>`<option value="${m}" ${filterMonth===m?'selected':''}>${m}</option>`).join('');
+  let list=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  if(filterCat) list=list.filter(e=>e.catId==filterCat);
+  if(filterMonth) list=list.filter(e=>e.date.startsWith(filterMonth));
+
+  // Mobile cards
+  const listEl = document.getElementById('journal-list');
+  if(!list.length) {
+    listEl.innerHTML='<div class="empty">Aucune activité enregistrée.<br>Commencez par l\'onglet Saisie.</div>';
+  } else {
+    listEl.innerHTML = list.map(e=>{
+      const cat=getCatById(e.catId), col=getCatColor(e.catId);
+      return `<div class="journal-card">
+        <div class="journal-card-header">
+          <div class="journal-card-meta">
+            <span class="date-chip">${e.date}</span>
+            <span class="badge" style="background:${col}22;color:${col}">${cat.name}</span>
+          </div>
+          <div class="journal-card-actions">
+            <button class="btn secondary sm" onclick="window.openEditEntry('${e._docId}')">Modifier</button>
+            <button class="btn danger sm" onclick="window.deleteEntry('${e._docId}')">Suppr.</button>
+          </div>
+        </div>
+        <div class="journal-card-desc">${e.desc||'—'}</div>
+        ${e.notes?`<div class="journal-card-notes">${e.notes}</div>`:''}
+        <div class="journal-card-stats">
+          ${e.heures?`<span>⏱ ${e.heures}h</span>`:''}
+          ${e.actions?`<span>✓ ${e.actions} action(s)</span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Desktop table
+  const tableEl = document.getElementById('journal-table');
+  if(!list.length) { tableEl.innerHTML='<div class="empty">Aucune activité enregistrée.</div>'; return; }
+  tableEl.innerHTML=`<table class="log-table"><thead><tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Heures</th><th>Actions</th><th></th></tr></thead><tbody>`+
+  list.map(e=>{
+    const cat=getCatById(e.catId),col=getCatColor(e.catId);
+    return `<tr><td style="white-space:nowrap">${e.date}</td><td><span class="badge" style="background:${col}22;color:${col}">${cat.name}</span></td><td>${e.desc||'—'}${e.notes?`<br><span style="font-size:11px;color:#aaa">${e.notes}</span>`:''}</td><td style="text-align:center">${e.heures||'—'}</td><td style="text-align:center">${e.actions||'—'}</td><td style="white-space:nowrap"><button class="btn secondary sm" style="margin-right:4px;" onclick="window.openEditEntry('${e._docId}')">Modifier</button><button class="btn danger sm" onclick="window.deleteEntry('${e._docId}')">Suppr.</button></td></tr>`;
   }).join('')+'</tbody></table>';
 }
 
 function populateCatSelect() {
-  const opts = categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  document.getElementById('f-cat').innerHTML = opts;
-  document.getElementById('me-cat').innerHTML = opts;
-  if (!document.getElementById('f-date').value) document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+  const opts=categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('f-cat').innerHTML=opts;
+  document.getElementById('me-cat').innerHTML=opts;
+  if(!document.getElementById('f-date').value) document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
 }
 
 function renderSettings() {
-  document.getElementById('cat-list').innerHTML = categories.map((c,i) => `
+  document.getElementById('cat-list').innerHTML=categories.map((c,i)=>`
     <div class="cat-item">
-      <div style="width:14px;height:14px;border-radius:3px;background:${COLORS[i%COLORS.length]};flex-shrink:0;"></div>
-      <div style="flex:1;font-size:14px;font-weight:500;">${c.name}</div>
-      <div style="font-size:13px;color:#666;margin-right:8px;">Cible : ${c.target||0}%</div>
-      <button class="btn warning sm" style="margin-right:4px;" onclick="window.openRename(${c.id})">Modifier</button>
+      <div class="cat-dot" style="background:${COLORS[i%COLORS.length]};"></div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-target">${c.target||0}%</div>
+      <button class="btn warning sm" onclick="window.openRename(${c.id})">Modifier</button>
       <button class="btn danger sm" onclick="window.openDeleteCat(${c.id})">Suppr.</button>
     </div>`).join('');
 }
 
-// ── RENAME CATEGORY ──
 window.openRename = function(id) {
-  const cat = getCatById(id);
-  const count = entries.filter(e => e.catId == id).length;
-  pendingRename = id;
-  document.getElementById('modal-new-name').value = cat.name;
-  document.getElementById('modal-new-target').value = cat.target || 0;
-  document.getElementById('modal-rename-msg').innerHTML =
-    `Vous modifiez <strong>"${cat.name}"</strong>.<br>
-    ${count > 0 ? `<span style="color:#854F0B;">⚠️ Cette catégorie est utilisée dans <strong>${count} entrée(s)</strong> du journal. Le nom sera mis à jour partout.</span>` : 'Cette catégorie n\'est pas encore utilisée dans le journal.'}`;
+  const cat=getCatById(id), count=entries.filter(e=>e.catId==id).length;
+  pendingRename=id;
+  document.getElementById('modal-new-name').value=cat.name;
+  document.getElementById('modal-new-target').value=cat.target||0;
+  document.getElementById('modal-rename-msg').innerHTML=`Modification de <strong>"${cat.name}"</strong>.<br>${count>0?`<span style="color:#854F0B;">⚠️ ${count} entrée(s) du journal seront mises à jour.</span>`:'Catégorie non encore utilisée dans le journal.'}`;
   openModal('modal-rename');
 };
-
 window.confirmRename = async function() {
-  const newName = document.getElementById('modal-new-name').value.trim();
-  const newTarget = parseInt(document.getElementById('modal-new-target').value) || 0;
-  if (!newName) return;
-  const cat = categories.find(c => c.id == pendingRename);
-  if (!cat) return;
-  cat.name = newName;
-  cat.target = newTarget;
+  const newName=document.getElementById('modal-new-name').value.trim();
+  const newTarget=parseInt(document.getElementById('modal-new-target').value)||0;
+  if(!newName) return;
+  const cat=categories.find(c=>c.id==pendingRename);
+  if(!cat) return;
+  cat.name=newName; cat.target=newTarget;
   await saveCategories();
-  closeModal('modal-rename');
-  setSyncStatus('Synchronisé', true);
-  renderAll();
-  showStatus('cat-status', 'Catégorie modifiée avec succès dans toutes les entrées.', 'ok');
+  closeModal('modal-rename'); setSyncStatus('Synchronisé',true); renderAll();
+  showStatus('cat-status','Catégorie modifiée avec succès.','ok');
 };
 
-// ── DELETE CATEGORY ──
 window.openDeleteCat = function(id) {
-  const cat = getCatById(id);
-  const count = entries.filter(e => e.catId == id).length;
-  pendingDeleteCat = id;
-  document.getElementById('modal-delete-cat-msg').innerHTML =
-    `Vous allez supprimer <strong>"${cat.name}"</strong>.<br><br>
-    ${count > 0
-      ? `<span style="color:#A32D2D;">⚠️ <strong>${count} entrée(s)</strong> du journal utilisent cette catégorie. Elles ne seront pas supprimées mais leur catégorie apparaîtra comme inconnue.</span>`
-      : 'Cette catégorie n\'est pas utilisée dans le journal.'}`;
+  const cat=getCatById(id), count=entries.filter(e=>e.catId==id).length;
+  pendingDeleteCat=id;
+  document.getElementById('modal-delete-cat-msg').innerHTML=`Supprimer <strong>"${cat.name}"</strong> ?<br>${count>0?`<span style="color:#A32D2D;">⚠️ ${count} entrée(s) du journal utilisent cette catégorie.</span>`:'Catégorie non utilisée dans le journal.'}`;
   openModal('modal-delete-cat');
 };
-
 window.confirmDeleteCat = async function() {
-  categories = categories.filter(c => c.id != pendingDeleteCat);
-  await saveCategories();
-  closeModal('modal-delete-cat');
-  setSyncStatus('Synchronisé', true);
-  renderAll();
-  showStatus('cat-status', 'Catégorie supprimée.', 'ok');
+  categories=categories.filter(c=>c.id!=pendingDeleteCat);
+  await saveCategories(); closeModal('modal-delete-cat'); setSyncStatus('Synchronisé',true); renderAll();
+  showStatus('cat-status','Catégorie supprimée.','ok');
 };
 
-// ── EDIT ENTRY ──
 window.openEditEntry = function(docId) {
-  const e = entries.find(x => x._docId === docId);
-  if (!e) return;
-  pendingEditEntry = docId;
-  document.getElementById('me-date').value = e.date;
-  document.getElementById('me-cat').value = e.catId;
-  document.getElementById('me-desc').value = e.desc || '';
-  document.getElementById('me-heures').value = e.heures || '';
-  document.getElementById('me-actions').value = e.actions || '';
-  document.getElementById('me-notes').value = e.notes || '';
+  const e=entries.find(x=>x._docId===docId); if(!e) return;
+  pendingEditEntry=docId;
+  document.getElementById('me-date').value=e.date;
+  document.getElementById('me-cat').value=e.catId;
+  document.getElementById('me-desc').value=e.desc||'';
+  document.getElementById('me-heures').value=e.heures||'';
+  document.getElementById('me-actions').value=e.actions||'';
+  document.getElementById('me-notes').value=e.notes||'';
   openModal('modal-edit-entry');
 };
-
 window.confirmEditEntry = async function() {
-  const e = entries.find(x => x._docId === pendingEditEntry);
-  if (!e) return;
-  const updated = {
-    date: document.getElementById('me-date').value,
-    catId: parseInt(document.getElementById('me-cat').value),
-    desc: document.getElementById('me-desc').value.trim(),
-    heures: parseFloat(document.getElementById('me-heures').value) || 0,
-    actions: parseInt(document.getElementById('me-actions').value) || 0,
-    notes: document.getElementById('me-notes').value.trim(),
-  };
+  const e=entries.find(x=>x._docId===pendingEditEntry); if(!e) return;
+  const updated={date:document.getElementById('me-date').value,catId:parseInt(document.getElementById('me-cat').value),desc:document.getElementById('me-desc').value.trim(),heures:parseFloat(document.getElementById('me-heures').value)||0,actions:parseInt(document.getElementById('me-actions').value)||0,notes:document.getElementById('me-notes').value.trim()};
   try {
-    await updateDoc(doc(db, 'pls_entries', pendingEditEntry), updated);
-    Object.assign(e, updated);
-    closeModal('modal-edit-entry');
-    setSyncStatus('Synchronisé', true);
-    renderJournal();
-    renderDashboard();
-  } catch(err) {
-    showStatus('edit-entry-status', 'Erreur : ' + err.message, 'err');
-  }
+    await updateDoc(doc(db,'pls_entries',pendingEditEntry),updated);
+    Object.assign(e,updated); closeModal('modal-edit-entry'); setSyncStatus('Synchronisé',true); renderJournal(); renderDashboard();
+  } catch(err) { showStatus('edit-entry-status','Erreur : '+err.message,'err'); }
 };
 
-// ── SAVE NEW ENTRY ──
 window.saveEntry = async function() {
-  const date = document.getElementById('f-date').value;
-  const catId = parseInt(document.getElementById('f-cat').value);
-  const desc = document.getElementById('f-desc').value.trim();
-  const heures = parseFloat(document.getElementById('f-heures').value) || 0;
-  const actions = parseInt(document.getElementById('f-actions').value) || 0;
-  const notes = document.getElementById('f-notes').value.trim();
-  if (!date || !catId) { showStatus('form-status', 'Veuillez renseigner la date et la catégorie.', 'err'); return; }
+  const date=document.getElementById('f-date').value, catId=parseInt(document.getElementById('f-cat').value);
+  const desc=document.getElementById('f-desc').value.trim(), heures=parseFloat(document.getElementById('f-heures').value)||0;
+  const actions=parseInt(document.getElementById('f-actions').value)||0, notes=document.getElementById('f-notes').value.trim();
+  if(!date||!catId){showStatus('form-status','Veuillez renseigner la date et la catégorie.','err');return;}
   try {
-    setSyncStatus('Enregistrement...', null);
-    const entry = { date, catId, desc, heures, actions, notes, createdAt: new Date().toISOString() };
-    const ref = await addDoc(collection(db, 'pls_entries'), entry);
-    entries.unshift({ ...entry, _docId: ref.id });
-    setSyncStatus('Synchronisé', true);
-    showStatus('form-status', 'Activité enregistrée dans Firebase !', 'ok');
+    setSyncStatus('Enregistrement…',null);
+    const entry={date,catId,desc,heures,actions,notes,createdAt:new Date().toISOString()};
+    const ref=await addDoc(collection(db,'pls_entries'),entry);
+    entries.unshift({...entry,_docId:ref.id});
+    setSyncStatus('Synchronisé',true); showStatus('form-status','Activité enregistrée !','ok');
     clearForm(); renderDashboard();
-  } catch(e) { showStatus('form-status', 'Erreur : ' + e.message, 'err'); }
+  } catch(e){showStatus('form-status','Erreur : '+e.message,'err');}
+};
+window.clearForm=function(){['f-desc','f-heures','f-actions','f-notes'].forEach(id=>document.getElementById(id).value='');};
+window.deleteEntry=async function(docId){
+  if(!confirm('Supprimer cette entrée ?')) return;
+  try{await deleteDoc(doc(db,'pls_entries',docId));entries=entries.filter(e=>e._docId!==docId);renderJournal();renderDashboard();setSyncStatus('Synchronisé',true);}
+  catch(e){setSyncStatus('Erreur',false);}
 };
 
-window.clearForm = function() { ['f-desc','f-heures','f-actions','f-notes'].forEach(id => document.getElementById(id).value = ''); };
-
-window.deleteEntry = async function(docId) {
-  if (!confirm('Supprimer cette entrée ?')) return;
-  try {
-    await deleteDoc(doc(db, 'pls_entries', docId));
-    entries = entries.filter(e => e._docId !== docId);
-    renderJournal(); renderDashboard(); setSyncStatus('Synchronisé', true);
-  } catch(e) { setSyncStatus('Erreur suppression', false); }
-};
-
-// ── CSV IMPORT ──
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
-dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f) parseCSVFile(f); });
-
-window.handleCSVFile = function(input) { if(input.files[0]) parseCSVFile(input.files[0]); };
-
-function parseCSVFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => analyzeCSV(e.target.result);
-  reader.readAsText(file, 'UTF-8');
-}
-
-function parseCSVLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') { inQ = !inQ; }
-    else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
-    else { cur += ch; }
-  }
-  result.push(cur.trim());
-  return result;
-}
-
-function entryKey(e) {
-  return `${e.date}|${e.catId}|${e.desc}|${e.heures}|${e.actions}|${e.notes}`;
-}
+// CSV IMPORT
+document.getElementById('csv-input').addEventListener('change',function(){if(this.files[0])parseCSVFile(this.files[0]);});
+window.handleCSVFile=function(input){if(input.files[0])parseCSVFile(input.files[0]);};
+function parseCSVFile(file){const r=new FileReader();r.onload=e=>analyzeCSV(e.target.result);r.readAsText(file,'UTF-8');}
+function parseCSVLine(line){const res=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){res.push(cur.trim());cur='';}else{cur+=ch;}}res.push(cur.trim());return res;}
+function entryKey(e){return `${e.date}|${e.catId}|${e.desc}|${e.heures}|${e.actions}|${e.notes}`;}
 
 function analyzeCSV(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length < 2) { showStatus('import-status', 'Fichier CSV vide ou invalide.', 'err'); return; }
-
-  const header = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/[^a-zàâéèêôùûç]/gi,''));
-  pendingImport = [];
-  let countOk = 0, countWarnCat = 0, countDup = 0, countSkip = 0;
-
-  const existingKeys = new Set(entries.map(entryKey));
-
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    if (cols.length < 2) continue;
-
-    const rawDate = (cols[0]||'').trim();
-    const rawCat = (cols[1]||'').trim();
-    const desc = (cols[2]||'').trim();
-    const heures = parseFloat(cols[3]) || 0;
-    const actions = parseInt(cols[4]) || 0;
-    const notes = (cols[5]||'').trim();
-
-    // Validate date format YYYY-MM-DD
-    const dateOk = /^\d{4}-\d{2}-\d{2}$/.test(rawDate);
-    if (!dateOk) { pendingImport.push({ status: 'skip', msg: `Ligne ${i+1} ignorée : date invalide "${rawDate}"` }); countSkip++; continue; }
-
-    const matchedCat = getCatByName(rawCat);
-    const status = matchedCat ? 'ok' : 'warn';
-    const catId = matchedCat ? matchedCat.id : null;
-    const catName = matchedCat ? matchedCat.name : rawCat;
-
-    const candidateKey = `${rawDate}|${catId}|${desc}|${heures}|${actions}|${notes}`;
-    const isDup = catId && existingKeys.has(candidateKey);
-
-    pendingImport.push({
-      status: isDup ? 'dup' : status,
-      date: rawDate, catId, catName, rawCat, desc, heures, actions, notes,
-      isDup, unknownCat: !matchedCat
-    });
-    if (isDup) countDup++;
-    else if (!matchedCat) countWarnCat++;
-    else countOk++;
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){showStatus('import-status','Fichier CSV vide ou invalide.','err');return;}
+  pendingImport=[];
+  const existingKeys=new Set(entries.map(entryKey));
+  let countOk=0,countWarn=0,countDup=0,countSkip=0;
+  for(let i=1;i<lines.length;i++){
+    const cols=parseCSVLine(lines[i]);
+    if(cols.length<2) continue;
+    const rawDate=(cols[0]||'').trim(), rawCat=(cols[1]||'').trim();
+    const desc=(cols[2]||'').trim(), heures=parseFloat(cols[3])||0, actions=parseInt(cols[4])||0, notes=(cols[5]||'').trim();
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(rawDate)){pendingImport.push({status:'skip',msg:`Ligne ${i+1} ignorée : date invalide "${rawDate}"`});countSkip++;continue;}
+    const matchedCat=getCatByName(rawCat);
+    const catId=matchedCat?matchedCat.id:null;
+    const candidateKey=`${rawDate}|${catId}|${desc}|${heures}|${actions}|${notes}`;
+    const isDup=catId&&existingKeys.has(candidateKey);
+    const status=isDup?'dup':!matchedCat?'warn':'ok';
+    pendingImport.push({status,date:rawDate,catId,catName:matchedCat?matchedCat.name:rawCat,rawCat,desc,heures,actions,notes,isDup,unknownCat:!matchedCat});
+    if(isDup)countDup++;else if(!matchedCat)countWarn++;else countOk++;
   }
-
-  // Render preview
-  document.getElementById('import-preview-area').style.display = 'block';
-  document.getElementById('import-preview').innerHTML = pendingImport.map(row => {
-    if (row.status === 'skip') return `<div class="import-row skip"><span class="tag skip">Ignoré</span> ${row.msg}</div>`;
-    if (row.isDup) return `<div class="import-row dup"><span class="tag dup">Doublon</span> ${row.date} — <strong>${row.catName}</strong> — ${row.desc||'(sans description)'} — ${row.heures}h</div>`;
-    if (row.unknownCat) return `<div class="import-row warn"><span class="tag warn">Catégorie inconnue</span> ${row.date} — <strong>"${row.rawCat}"</strong> → sera importé sans catégorie — ${row.desc||''}</div>`;
-    return `<div class="import-row ok"><span class="tag ok">OK</span> ${row.date} — <strong>${row.catName}</strong> — ${row.desc||''} — ${row.heures}h</div>`;
+  document.getElementById('import-preview-area').style.display='block';
+  document.getElementById('import-preview').innerHTML=pendingImport.map(row=>{
+    if(row.status==='skip') return `<div class="import-row skip"><span class="tag skip">Ignoré</span> ${row.msg}</div>`;
+    if(row.isDup) return `<div class="import-row dup"><span class="tag dup">Doublon</span> ${row.date} — ${row.catName} — ${row.desc||''}  ${row.heures}h</div>`;
+    if(row.unknownCat) return `<div class="import-row warn"><span class="tag warn">Cat. inconnue</span> ${row.date} — "${row.rawCat}" — ${row.desc||''}</div>`;
+    return `<div class="import-row ok"><span class="tag ok">OK</span> ${row.date} — ${row.catName} — ${row.desc||''} — ${row.heures}h</div>`;
   }).join('');
-
-  const toImport = pendingImport.filter(r => !r.isDup && r.status !== 'skip').length;
-  document.getElementById('import-summary').innerHTML =
-    `<strong>${toImport}</strong> ligne(s) seront importées · ` +
-    (countDup > 0 ? `<span style="color:#A32D2D">${countDup} doublon(s) ignoré(s)</span> · ` : '') +
-    (countWarnCat > 0 ? `<span style="color:#854F0B">${countWarnCat} catégorie(s) inconnue(s)</span> · ` : '') +
-    (countSkip > 0 ? `<span style="color:#aaa">${countSkip} ligne(s) invalide(s)</span>` : '');
+  const toImport=pendingImport.filter(r=>!r.isDup&&r.status!=='skip').length;
+  document.getElementById('import-summary').innerHTML=`<strong>${toImport}</strong> ligne(s) à importer · ${countDup>0?`<span style="color:#A32D2D">${countDup} doublon(s) ignoré(s)</span> · `:''}${countWarn>0?`<span style="color:#854F0B">${countWarn} catégorie(s) inconnue(s)</span> · `:''}${countSkip>0?`<span style="color:#aaa">${countSkip} ligne(s) invalide(s)</span>`:''}`;
 }
-
-window.confirmImport = async function() {
-  const toImport = pendingImport.filter(r => !r.isDup && r.status !== 'skip');
-  if (!toImport.length) { showStatus('import-status', 'Aucune ligne à importer.', 'warn'); return; }
-  try {
-    setSyncStatus('Import en cours...', null);
-    for (const row of toImport) {
-      const entry = { date: row.date, catId: row.catId || 0, desc: row.desc, heures: row.heures, actions: row.actions, notes: row.notes, createdAt: new Date().toISOString() };
-      const ref = await addDoc(collection(db, 'pls_entries'), entry);
-      entries.push({ ...entry, _docId: ref.id });
+window.confirmImport=async function(){
+  const toImport=pendingImport.filter(r=>!r.isDup&&r.status!=='skip');
+  if(!toImport.length){showStatus('import-status','Aucune ligne à importer.','warn');return;}
+  try{
+    setSyncStatus('Import…',null);
+    for(const row of toImport){
+      const entry={date:row.date,catId:row.catId||0,desc:row.desc,heures:row.heures,actions:row.actions,notes:row.notes,createdAt:new Date().toISOString()};
+      const ref=await addDoc(collection(db,'pls_entries'),entry);
+      entries.push({...entry,_docId:ref.id});
     }
-    entries.sort((a,b) => b.date.localeCompare(a.date));
-    setSyncStatus('Synchronisé', true);
-    showStatus('import-status', `${toImport.length} activité(s) importée(s) avec succès !`, 'ok');
-    cancelImport();
-    renderAll();
-  } catch(e) { showStatus('import-status', 'Erreur import : ' + e.message, 'err'); setSyncStatus('Erreur', false); }
+    entries.sort((a,b)=>b.date.localeCompare(a.date));
+    setSyncStatus('Synchronisé',true);showStatus('import-status',`${toImport.length} activité(s) importée(s) !`,'ok');
+    cancelImport();renderAll();
+  }catch(e){showStatus('import-status','Erreur : '+e.message,'err');}
+};
+window.cancelImport=function(){document.getElementById('import-preview-area').style.display='none';document.getElementById('csv-input').value='';pendingImport=[];};
+
+window.exportCSV=function(){
+  const rows=[['Date','Catégorie','Description','Heures','Actions','Notes']];
+  entries.forEach(e=>rows.push([e.date,getCatById(e.catId).name,e.desc,e.heures,e.actions,e.notes]));
+  const csv=rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='activites_PLS.csv';a.click();
+};
+window.exportJSON=function(){
+  const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify({categories,entries}));a.download='activites_PLS.json';a.click();
+};
+window.clearAll=async function(){
+  if(!confirm('Réinitialiser TOUTES les données ? Action irréversible.')) return;
+  const snap=await getDocs(collection(db,'pls_entries'));
+  await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
+  entries=[];renderDashboard();renderJournal();setSyncStatus('Réinitialisé',true);
 };
 
-window.cancelImport = function() {
-  document.getElementById('import-preview-area').style.display = 'none';
-  document.getElementById('csv-input').value = '';
-  pendingImport = [];
-};
-
-// ── EXPORTS ──
-window.exportCSV = function() {
-  const rows = [['Date','Catégorie','Description','Heures','Actions','Notes']];
-  entries.forEach(e => rows.push([e.date, getCatById(e.catId).name, e.desc, e.heures, e.actions, e.notes]));
-  const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'activites_PLS.csv'; a.click();
-};
-
-window.exportJSON = function() {
-  const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify({categories,entries})); a.download = 'activites_PLS.json'; a.click();
-};
-
-window.clearAll = async function() {
-  if (!confirm('Réinitialiser TOUTES les données ? Action irréversible.')) return;
-  const snap = await getDocs(collection(db, 'pls_entries'));
-  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
-  entries = []; renderDashboard(); renderJournal(); setSyncStatus('Réinitialisé', true);
-};
-
-// ── NAVIGATION ──
-window.showTab = function(t, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+window.showTab=function(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(t==='dashboard') renderDashboard();
-  if(t==='journal') renderJournal();
-  if(t==='parametres') renderSettings();
-  if(t==='saisie') populateCatSelect();
+  if(btn)btn.classList.add('active');
+  if(t==='dashboard')renderDashboard();
+  if(t==='journal')renderJournal();
+  if(t==='parametres')renderSettings();
+  if(t==='saisie')populateCatSelect();
 };
-
-window.setPeriod = function(p, btn) {
-  currentPeriod = p;
-  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+window.setPeriod=function(p,btn){
+  currentPeriod=p;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('period-label').textContent = {month:'Ce mois-ci',year:'Cette année',all:'Tout'}[p];
+  document.getElementById('period-label').textContent={month:'Ce mois-ci',year:'Cette année',all:'Tout'}[p];
   renderDashboard();
 };
-
-window.addCategory = async function() {
-  const name = document.getElementById('new-cat-name').value.trim();
-  const target = parseInt(document.getElementById('new-cat-target').value) || 0;
-  if (!name) return;
-  categories.push({ id: Date.now(), name, target });
+window.addCategory=async function(){
+  const name=document.getElementById('new-cat-name').value.trim();
+  const target=parseInt(document.getElementById('new-cat-target').value)||0;
+  if(!name) return;
+  categories.push({id:Date.now(),name,target});
   await saveCategories();
-  document.getElementById('new-cat-name').value = '';
-  document.getElementById('new-cat-target').value = '';
-  showStatus('cat-status', 'Catégorie ajoutée !', 'ok');
-  renderSettings(); populateCatSelect();
+  document.getElementById('new-cat-name').value='';document.getElementById('new-cat-target').value='';
+  showStatus('cat-status','Catégorie ajoutée !','ok');renderSettings();populateCatSelect();
 };
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if(e.target === overlay) overlay.classList.remove('show'); });
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('show');});
 });
 
 loadData();
