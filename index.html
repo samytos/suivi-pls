@@ -225,8 +225,8 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <!-- JOURNAL -->
   <div id="tab-journal" class="section">
     <div class="filter-row">
-      <select id="filter-cat" onchange="applyJournalFilters()"></select>
-      <select id="filter-month" onchange="applyJournalFilters()"></select>
+      <select id="filter-cat"></select>
+      <select id="filter-month"></select>
       <button class="btn secondary sm" onclick="exportCSV()">Export CSV</button>
     </div>
     <!-- Mobile: cards -->
@@ -718,6 +718,14 @@ document.querySelectorAll('.modal-overlay').forEach(overlay=>{
 });
 
 loadData();
+
+// Attach filter listeners here — avoids Chrome ES module scope issues
+document.getElementById('filter-cat').addEventListener('change', function() {
+  window.applyJournalFilters();
+});
+document.getElementById('filter-month').addEventListener('change', function() {
+  window.applyJournalFilters();
+});
 </script>
 </body>
 </html>
