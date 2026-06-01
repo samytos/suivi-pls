@@ -136,7 +136,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 /* DESKTOP enhancements */
 @media (min-width: 700px) {
   .container { padding: 24px; }
-  .metrics { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .metrics { grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .chart-wrap { height: 260px; }
   .modal-overlay { align-items: center; }
@@ -359,10 +359,10 @@ async function loadData() {
     if (catSnap.exists()) { categories = catSnap.data().list; }
     else {
       categories = [
-        {id:1,name:'Encadrement équipe',target:25},{id:2,name:'Planification / Logistique',target:20},
-        {id:3,name:'Gestion RH',target:15},{id:4,name:'Hygiène / Sécurité (ERP)',target:15},
-        {id:5,name:'Marchés publics',target:10},{id:6,name:'Relations & coordination',target:10},
-        {id:7,name:'Administration / Divers',target:5},
+        {id:1,name:'Encadrement équipe',target:25,hidden:false},{id:2,name:'Planification / Logistique',target:20,hidden:false},
+        {id:3,name:'Gestion RH',target:15,hidden:false},{id:4,name:'Hygiène / Sécurité (ERP)',target:15,hidden:false},
+        {id:5,name:'Marchés publics',target:10,hidden:false},{id:6,name:'Relations & coordination',target:10,hidden:false},
+        {id:7,name:'Administration / Divers',target:5,hidden:false},
       ];
       await saveCategories();
     }
@@ -376,6 +376,7 @@ async function loadData() {
 async function saveCategories() { await setDoc(doc(db,'pls_config','categories'), {list: categories}); }
 function getCatById(id) { return categories.find(c=>c.id==id)||{name:'?',id:0}; }
 function getCatColor(id) { const i=categories.findIndex(c=>c.id==id); return COLORS[i%COLORS.length]; }
+function visibleCategories() { return categories.filter(c=>!c.hidden); }
 function getCatByName(name) { return categories.find(c=>c.name.trim().toLowerCase()===name.trim().toLowerCase()); }
 
 function filteredEntries() {
@@ -396,7 +397,16 @@ function renderDashboard() {
   const totalA = fe.reduce((s,e)=>s+(parseInt(e.actions)||0),0);
   const jours = [...new Set(fe.map(e=>e.date))].length;
   const avgH = jours>0 ? totalH/jours : 0;
+  const today = new Date().toISOString().slice(0,10);
+  const todayH = entries.filter(e=>e.date===today).reduce((s,e)=>s+(parseFloat(e.heures)||0),0);
+  const todayCount = entries.filter(e=>e.date===today).length;
+
   document.getElementById('metrics-row').innerHTML = `
+    <div class="metric" style="border-left:4px solid #4B3FA0;">
+      <div class="metric-label">Aujourd'hui</div>
+      <div class="metric-value" style="color:#4B3FA0;">${todayH.toFixed(1)}h</div>
+      <div class="metric-sub">${todayCount} activité(s) · ${today}</div>
+    </div>
     <div class="metric"><div class="metric-label">Heures totales</div><div class="metric-value">${totalH.toFixed(1)}</div><div class="metric-sub">${jours} jour(s)</div></div>
     <div class="metric"><div class="metric-label">Actions</div><div class="metric-value">${totalA}</div><div class="metric-sub">tâches</div></div>
     <div class="metric"><div class="metric-label">Moy./jour</div><div class="metric-value">${avgH.toFixed(1)}h</div><div class="metric-sub">par jour actif</div></div>
@@ -405,21 +415,22 @@ function renderDashboard() {
   const bycat={};
   categories.forEach(c=>bycat[c.id]=0);
   fe.forEach(e=>{bycat[e.catId]=(bycat[e.catId]||0)+(parseFloat(e.heures)||0);});
+  const visCats = visibleCategories();
 
-  document.getElementById('legend-row').innerHTML = categories.map((c,i)=>
+  document.getElementById('legend-row').innerHTML = visCats.map((c,i)=>
     `<span class="legend-item"><span class="legend-sq" style="background:${COLORS[i%COLORS.length]}"></span>${c.name}</span>`).join('');
 
   if(chartDonut) chartDonut.destroy();
   chartDonut = new Chart(document.getElementById('chartDonut'), {
     type:'doughnut',
-    data:{labels:categories.map(c=>c.name),datasets:[{data:categories.map(c=>Math.round((bycat[c.id]||0)*10)/10),backgroundColor:categories.map((_,i)=>COLORS[i%COLORS.length]),borderWidth:2,borderColor:'#fff'}]},
+    data:{labels:visCats.map(c=>c.name),datasets:[{data:visCats.map(c=>Math.round((bycat[c.id]||0)*10)/10),backgroundColor:visCats.map((_,i)=>COLORS[i%COLORS.length]),borderWidth:2,borderColor:'#fff'}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw.toFixed(1)}h`}}}}
   });
 
   const alignEl = document.getElementById('role-align');
   if (totalH===0) { alignEl.innerHTML='<p style="color:#aaa;font-size:13px;padding:10px 0;">Aucune donnée pour la période.</p>'; }
   else {
-    alignEl.innerHTML = categories.map((c,i)=>{
+    alignEl.innerHTML = visCats.map((c,i)=>{
       const h=bycat[c.id]||0, pct=Math.round(h/totalH*100), diff=pct-(c.target||0);
       const col=Math.abs(diff)<=5?'#1D9E75':diff>5?'#E24B4A':'#BA7517';
       return `<div style="margin-bottom:12px;">
@@ -434,7 +445,7 @@ function renderDashboard() {
 
   const now=new Date();
   const months=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return{year:d.getFullYear(),month:d.getMonth(),label:MONTHS_FR[d.getMonth()]};});
-  const datasets=categories.map((c,i)=>({
+  const datasets=visCats.map((c,i)=>({
     label:c.name,
     data:months.map(m=>Math.round(entries.filter(e=>{const d=new Date(e.date);return e.catId==c.id&&d.getFullYear()===m.year&&d.getMonth()===m.month;}).reduce((s,e)=>s+(parseFloat(e.heures)||0),0)*10)/10),
     borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+'20',tension:0.3,fill:false,pointRadius:3
@@ -526,7 +537,7 @@ function renderJournalList(list) {
 }
 
 function populateCatSelect() {
-  const opts=categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  const opts=visibleCategories().map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   document.getElementById('f-cat').innerHTML=opts;
   document.getElementById('me-cat').innerHTML=opts;
   if(!document.getElementById('f-date').value) document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
@@ -534,14 +545,26 @@ function populateCatSelect() {
 
 function renderSettings() {
   document.getElementById('cat-list').innerHTML=categories.map((c,i)=>`
-    <div class="cat-item">
-      <div class="cat-dot" style="background:${COLORS[i%COLORS.length]};"></div>
-      <div class="cat-name">${c.name}</div>
+    <div class="cat-item" style="opacity:${c.hidden?0.45:1}">
+      <div class="cat-dot" style="background:${c.hidden?'#ccc':COLORS[i%COLORS.length]};"></div>
+      <div class="cat-name" style="text-decoration:${c.hidden?'line-through':''}">${c.name}</div>
       <div class="cat-target">${c.target||0}%</div>
+      <button class="btn sm" style="background:${c.hidden?'#E1F5EE':'#FFF8E1'};color:${c.hidden?'#0F6E56':'#854F0B'};border:1px solid ${c.hidden?'#1D9E75':'#EF9F27'};" onclick="window.toggleCatVisibility(${c.id})">${c.hidden?'Afficher':'Masquer'}</button>
       <button class="btn warning sm" onclick="window.openRename(${c.id})">Modifier</button>
       <button class="btn danger sm" onclick="window.openDeleteCat(${c.id})">Suppr.</button>
     </div>`).join('');
 }
+
+window.toggleCatVisibility = async function(id) {
+  const cat = categories.find(c=>c.id==id);
+  if(!cat) return;
+  cat.hidden = !cat.hidden;
+  await saveCategories();
+  setSyncStatus('Synchronisé', true);
+  renderSettings();
+  populateCatSelect();
+  renderDashboard();
+};
 
 window.openRename = function(id) {
   const cat=getCatById(id), count=entries.filter(e=>e.catId==id).length;
@@ -707,7 +730,7 @@ window.addCategory=async function(){
   const name=document.getElementById('new-cat-name').value.trim();
   const target=parseInt(document.getElementById('new-cat-target').value)||0;
   if(!name) return;
-  categories.push({id:Date.now(),name,target});
+  categories.push({id:Date.now(),name,target,hidden:false});
   await saveCategories();
   document.getElementById('new-cat-name').value='';document.getElementById('new-cat-target').value='';
   showStatus('cat-status','Catégorie ajoutée !','ok');renderSettings();populateCatSelect();
